@@ -5,6 +5,11 @@
       "ProjectGuid": "30d293a8-a92e-4228-8ee9-0d9fd1de748c",
       "DisplayName": "Akkinator",
       "ColorIndex": 0
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
     }
   },
   "NextColorIndex": 1

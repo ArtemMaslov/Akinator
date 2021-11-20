@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -140,12 +140,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logs\Logs.cpp" />
+    <ClCompile Include="..\StackLibrary\Stack.cpp" />
+    <ClCompile Include="..\StackLibrary\StackDiagnostic.cpp" />
+    <ClCompile Include="..\StackLibrary\StackProtection.cpp" />
+    <ClCompile Include="..\StringLibrary\StringLibrary.cpp" />
     <ClCompile Include="Akinator.cpp" />
+    <ClCompile Include="AkinatorTree.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Tree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Logs\Logs.h" />
+    <ClInclude Include="..\StackLibrary\Stack.h" />
+    <ClInclude Include="..\StackLibrary\StackDiagnostic.h" />
+    <ClInclude Include="..\StackLibrary\StackProtection.h" />
+    <ClInclude Include="..\StringLibrary\StringLibrary.h" />
     <ClInclude Include="Akinator.h" />
+    <ClInclude Include="AkinatorTree.h" />
     <ClInclude Include="Tree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

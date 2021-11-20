@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="StringLibraries">
+      <UniqueIdentifier>{5751b723-22b7-43e7-be81-231d15770817}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StackLibrary">
+      <UniqueIdentifier>{f8bac3fb-a90a-4ed0-b538-dc35019e2059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logs">
+      <UniqueIdentifier>{ef0fc209-29af-45a8-841c-381abe6536ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,12 +33,48 @@
     <ClCompile Include="Akinator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\StringLibrary\StringLibrary.cpp">
+      <Filter>StringLibraries</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StackLibrary\Stack.cpp">
+      <Filter>StackLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StackLibrary\StackDiagnostic.cpp">
+      <Filter>StackLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\StackLibrary\StackProtection.cpp">
+      <Filter>StackLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logs\Logs.cpp">
+      <Filter>Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="AkinatorTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Akinator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StringLibrary\StringLibrary.h">
+      <Filter>StringLibraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackLibrary\Stack.h">
+      <Filter>StackLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackLibrary\StackDiagnostic.h">
+      <Filter>StackLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StackLibrary\StackProtection.h">
+      <Filter>StackLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Logs\Logs.h">
+      <Filter>Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="AkinatorTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
