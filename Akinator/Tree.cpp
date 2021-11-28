@@ -18,7 +18,7 @@
 ///  *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *   \\\
 
 
-void PrintNode(Node* root)
+void PrintNodeToFile(Node* root)
 {
     assert(root);
 
@@ -32,7 +32,32 @@ static size_t SizeofTreeType(const char* value)
 
 static int CompareObject(treeType obj1, treeType obj2)
 {
-    return strcmp(obj1.ptr, obj2.ptr);
+    size_t min = (obj1.length < obj2.length)? obj1.length: obj2.length;
+    size_t index = 0;
+    bool res = true;
+
+    while (res && index < min)
+    {
+        if (obj1.ptr[index] == obj2.ptr[index])
+        {
+            index++;
+        }
+        else if (obj1.ptr[index] < obj2.ptr[index])
+        {
+            return -1;
+        }
+        else
+        { 
+            return 1;
+        }
+    }
+
+    if (obj1.length == obj2.length)
+        return 0;
+    else if (obj1.length < obj2.length)
+        return -1;
+    else
+        return 1;
 }
 
 ///  *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *   \\\
@@ -125,6 +150,26 @@ bool TreeAddRightNode(Node* parent, Node* child)
     return true;
 }
 
+void TreeMeasure(Tree* tree, Node* node, size_t length)
+{
+    if (!node)
+    {
+        tree->treeLength = 0;
+        return;
+    }
+
+    length++;
+
+    if (node->nodeLeft)
+        TreeMeasure(tree, node->nodeLeft, length);
+
+    if (node->nodeRight)
+        TreeMeasure(tree, node->nodeRight, length);
+
+    if (tree->treeLength < length)
+        tree->treeLength = length;
+}
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
@@ -154,14 +199,16 @@ Node* TreeFindObject(Node* node, treeType object)
     
     if (CompareObject(object, node->value) == 0)
         return node;
+    
+    Node* result = nullptr;
 
     if (node->nodeLeft)
-        return TreeFindObject(node->nodeLeft, object);
+        result = TreeFindObject(node->nodeLeft, object);
     
-    if (node->nodeRight)
-        return TreeFindObject(node->nodeRight, object);
+    if (node->nodeRight && !result)
+        result = TreeFindObject(node->nodeRight, object);
     
-    return nullptr;
+    return result;
 }
 
 Node* TreeFindObjectStack(Node* node, treeType object, Stack* stk)
@@ -173,13 +220,28 @@ Node* TreeFindObjectStack(Node* node, treeType object, Stack* stk)
     if (CompareObject(object, node->value) == 0)
         return node;
 
-    if (node->nodeLeft)
-        return TreeFindObject(node->nodeLeft, object);
-    
-    if (node->nodeRight)
-        return TreeFindObject(node->nodeRight, object);
+    Node* result = nullptr;
 
-    StackPop(stk, nullptr);
+    if (node->nodeLeft)
+        result = TreeFindObjectStack(node->nodeLeft, object, stk);
+        
+    if (node->nodeRight && !result)
+        result = TreeFindObjectStack(node->nodeRight, object, stk);
+
+    if (!result)
+        StackPop(stk, nullptr);
+
+    return result;
+}
+
+Node* GetNodeFromStack(Stack* stk, size_t index)
+{
+    assert(stk);
+
+    Node** nodeptr = (Node**)StackGetElemAt(stk, index);
+
+    if (nodeptr)
+        return *nodeptr;
 
     return nullptr;
 }

@@ -153,7 +153,7 @@ void* StackPop(Stack *stack, int *error = nullptr);
 */
 int   ValidateStack(Stack *stack);
 
-void* GetElemAt(Stack* stack, size_t index);
+void* StackGetElemAt(Stack* stack, size_t index);
 
 //#define StackDump(stack, file, programm_function_name, programm_file, programm_line) \
 //StackDump_(stack, file, #stack, __FUNCTION__, __FILE__, __LINE__, programm_function_name, programm_file, programm_line);

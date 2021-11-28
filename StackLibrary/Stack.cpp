@@ -180,9 +180,12 @@ void* StackPop(Stack *stack, int *error)
     return (char*)stack->data + (stack->elementSize * stack->stackSize);
 }
 
-void* GetElemAt(Stack* stack, size_t index)
+void* StackGetElemAt(Stack* stack, size_t index)
 {
-
+    if (index > stack->stackSize)
+        return nullptr;
+    
+    return (char*)stack->data + index * stack->elementSize;
 }
 
 static Stack* StackResize(Stack *stack, int *error)

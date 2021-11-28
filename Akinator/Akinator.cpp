@@ -11,9 +11,40 @@
 #include "..\StringLibrary\StringLibrary.h"
 
 
+const char* menuItems[] =
+{
+    "Играть",
+    "Определить",
+    "Сравнить",
+    "Выход",
+};
+
+const char menuLetters[]
+{
+    'a',
+    'b',
+    'c',
+    'd'
+};
+
+enum menuActions
+{
+    PLAY_AKINATOR = 'a',
+    DEF_OBJECTS   = 'b',
+    CMP_OBJECTS   = 'c',
+    QUIT          = 'd'
+};
+
+
 static bool ParseText(Akinator* akinator);
 
-static void PrintNode(Node* node, FILE* file);
+static void PrintNodeToFile(Node* node, FILE* file);
+
+static void ReadLine(String* str, size_t bufferSize, const char* msg);
+
+static void ChoseAction();
+
+static void PrintNodeValue(const char* prefix, String* str, const char* postfix, FILE* file);
 
 
 Akinator AkinatorConstructor(FILE* file)
@@ -27,14 +58,10 @@ Akinator AkinatorConstructor(FILE* file)
     result = ReadFile(&akinator.text, file);
 
     if (result)
+    {
         result = ParseText(&akinator);
-
-    if (result)
-        result = CreateGraph(&akinator, "D:\\Язык C\\Akinator\\Graph.png");
-
-    FILE* out_file = fopen("D:\\Язык C\\Akinator\\out.txt", "w");
-
-    WriteTreeToFile(&akinator, out_file);
+        TreeMeasure(&akinator.tree, akinator.tree.root, 0);
+    }
 
     if (!result)
     {
@@ -109,7 +136,7 @@ static bool ParseText(Akinator* akinator)
                 String string =
                 {
                     strStart,
-                    ptr - strStart + 1
+                    (size_t)(ptr - strStart + 1)
                 };
                 node->value = string;
                 strStart = nullptr;
@@ -134,13 +161,10 @@ static bool ParseText(Akinator* akinator)
             Node* parentNode = *_parentNode;
 
             if (parentNode->nodeRight == nullptr)
-            {
-                parentNode->nodeRight = childNode;
-            }
+                TreeAddRightNode(parentNode, childNode);
             else
-            {
-                parentNode->nodeLeft = childNode;
-            }
+                TreeAddLeftNode(parentNode, childNode);
+
             StackPush(&stk, &parentNode);
         }
         ptr++;
@@ -158,15 +182,13 @@ void WriteTreeToFile(Akinator* akinator, FILE* file)
 {
     assert(akinator);
 
-    PrintNode(akinator->tree.root, file);
+    PrintNodeToFile(akinator->tree.root, file);
 }
 
-static void PrintNode(Node* node, FILE* file)
+static void PrintNodeToFile(Node* node, FILE* file)
 {
     assert(node);
-
-    if (!node)
-        return;
+    assert(file);
     
     fputc('{', file);
 
@@ -179,25 +201,34 @@ static void PrintNode(Node* node, FILE* file)
     }
 
     if (node->nodeRight)
-        PrintNode(node->nodeRight, file);
+        PrintNodeToFile(node->nodeRight, file);
 
     if (node->nodeLeft)
-        PrintNode(node->nodeLeft, file);
+        PrintNodeToFile(node->nodeLeft, file);
     
     fputc('}', file);
 }
 
-void PlayAkinator(Akinator* akinator)
+static void PrintNodeValue(const char* prefix, String* str, const char* postfix, FILE* file)
 {
+    assert(str);
+    assert(file);
 
+    if (prefix)
+        fputs(prefix, file);
+
+    size_t strLen = str->length;
+    char*  ptr    = str->ptr;
+    for (size_t st = 0; st < strLen; st++)
+        fputc(ptr[st], file);
+
+    if (postfix)
+        fputs(postfix, file);
 }
 
-void GetObjectDefinition(Akinator* akinator, const char* str)
+void GetObjectDefinition(Akinator* akinator, String* str)
 {
-    String string = {};
-    string.ptr = (char*)str;
-
-    Node* node = TreeFindObject(akinator->tree.root, string);
+    Node* node = TreeFindObject(akinator->tree.root, *str);
 
     if (!node)
     {
@@ -205,20 +236,18 @@ void GetObjectDefinition(Akinator* akinator, const char* str)
         return;
     }
 
-    if (node->nodeLeft || node->nodeRight)
-    {
-        puts("Строка является вопросом, а не объектом.");
-        return;
-    }
-
-    printf("%s ", node->value.ptr);
+    PrintNodeValue(nullptr, &node->value, nullptr, stdout);
 
     while (node->parent && node->parent->parent)
     {
         if (node->parent->nodeRight == node)
-            printf("%s%s", node->parent->value.ptr, node->parent->parent? ", " : " и ");
+        {
+            PrintNodeValue(" ", &node->parent->value, node->parent->parent? ", " : " и ", stdout);
+        }
         else
-            printf("не %s%s", node->parent->value.ptr, node->parent->parent? ", " : " и ");
+        {
+            PrintNodeValue(" не ", &node->parent->value, node->parent->parent? ", " : " и ", stdout);
+        }
 
         node = node->parent;
     }
@@ -226,26 +255,28 @@ void GetObjectDefinition(Akinator* akinator, const char* str)
     if (node->parent)
     {
         if (node->parent->nodeRight == node)
-            printf("%s.", node->parent->value.ptr);
+        {
+            PrintNodeValue(" ", &node->parent->value, ".\n", stdout);
+        }
         else
-            printf("не %s.", node->parent->value.ptr);
+        {
+            PrintNodeValue(" не ", &node->parent->value, ".\n", stdout);
+        }
     }
     else
-        puts("Ошибка");
+        PrintNodeValue(". Ни да, ни нет. Просто ", &node->value, ".\n", stdout);
 }
 
-void CompareObjects(Akinator* akinator, const char* str1, const char* str2)
+void CompareObjects(Akinator* akinator, String str1, String str2)
 {
     Stack stk1 = {};
     Stack stk2 = {};
-    String s1 = {};
-    String s2 = {};
 
-    s1.ptr = (char*)str1;
-    s2.ptr = (char*)str2;
+    StackConstructor(&stk1, sizeof(Node*), akinator->tree.treeLength);
+    StackConstructor(&stk2, sizeof(Node*), akinator->tree.treeLength);
     
-    Node* n1 = TreeFindObjectStack(akinator->tree.root, s1, &stk1);
-    Node* n2 = TreeFindObjectStack(akinator->tree.root, s2, &stk2);
+    Node* n1 = TreeFindObjectStack(akinator->tree.root, str1, &stk1);
+    Node* n2 = TreeFindObjectStack(akinator->tree.root, str2, &stk2);
 
     if (!n1)
     {
@@ -258,18 +289,188 @@ void CompareObjects(Akinator* akinator, const char* str1, const char* str2)
         puts("Строка не найдена в дереве");
         return;
     }
-    
-    if (n1->nodeLeft || n1->nodeRight)
+    size_t index = 0;
+
+    PrintNodeValue(nullptr, &str1, nullptr, stdout);
+    PrintNodeValue(" и ", &str2, nullptr, stdout);
+
+    Node* parent = GetNodeFromStack(&stk1, index);
+    index++;
+    Node* child1 = GetNodeFromStack(&stk1, index);
+    Node* child2 = GetNodeFromStack(&stk2, index);
+
+    if (child1 == child2)
     {
-        puts("Строка является вопросом, а не объектом.");
-        return;
+        puts(" похожи тем, что они ");
+        size_t sameCount = 0;
+        while (child1 && child1 == child2)
+        {
+            sameCount++;
+        }
+
+        while (child1 && child1 == child2)
+        {
+            PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &parent->value, " и ", stdout);
+
+            index++;
+            parent = child1;
+            child1 = GetNodeFromStack(&stk1, index);
+            child2 = GetNodeFromStack(&stk2, index);
+            if (child1 == child2)
+                puts("\b\b\b, ");
+        }
     }
     
-    if (n2->nodeLeft || n2->nodeRight)
+    PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &parent->value, ".\n", stdout);
+
+    PrintNodeValue(nullptr, &str1, nullptr, stdout);
+    PrintNodeValue(" и ", &str2, " различаются тем, что ", stdout);
+
+    PrintNodeValue(nullptr, &str1, nullptr, stdout);
+
+    parent = child1->parent;
+    while (index < stk1.stackSize)
     {
-        puts("Строка является вопросом, а не объектом.");
-        return;
+        PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &child1->value, ", ", stdout);
+        
+        parent = child1;
+        index++;
+        child1 = GetNodeFromStack(&stk1, index);
+        
+        if (index == stk1.stackSize)
+            puts("\b\b и");
     }
 
+    PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &child1->value, ", а ", stdout);
+    
+    PrintNodeValue(nullptr, &str2, nullptr, stdout);
+    
+    index = minIndex;
+    parent = child2->parent;
+    while (index < stk2.stackSize)
+    {
+        PrintNodeValue(parent->nodeLeft == child2->parent? "не " : "", &child2->value, ", ", stdout);
+        
+        parent = child2;
+        index++;
+        child2 = GetNodeFromStack(&stk2, index);
+        
+        if (index == stk2.stackSize)
+            puts("\b\b и ");
+    }
+    PrintNodeValue(nullptr, &child2->value, ".\n", stdout);
+}
 
+void PlayAkinator(Akinator* akinator)
+{
+
+}
+
+bool ShowMenu(Akinator* akinator)
+{
+    puts("Добро пожаловать в игру Акинатор!");
+
+    char c = '\0';
+
+    while (true)
+    {
+        ChoseAction();
+        scanf("%c", &c);
+
+        while (getchar() != '\n')
+            break;
+
+        switch (c)
+        {
+            case menuActions::PLAY_AKINATOR:
+            {
+                PlayAkinator(akinator);
+                break;
+            }
+            case menuActions::CMP_OBJECTS:
+            {
+                const size_t bufferSize = 100;
+                String str1 = {};
+                String str2 = {};
+
+                str1.ptr = (char*)calloc(bufferSize, sizeof(char));
+                str2.ptr = (char*)calloc(bufferSize, sizeof(char));
+
+                if (!str1.ptr || !str2.ptr)
+                {
+                    puts("Нехватает памяти");
+                    return false;
+                }
+
+                ReadLine(&str1, bufferSize, "Введите первый сравниваемый объект:");
+                ReadLine(&str2, bufferSize, "Введите второй сравниваемый объект:");
+
+                CompareObjects(akinator, str1, str2);
+
+                free(str1.ptr);
+                free(str2.ptr);
+                break;
+            }
+            case menuActions::DEF_OBJECTS:
+            {
+                const size_t bufferSize = 100;
+                String str = {};
+
+                str.ptr = (char*)calloc(bufferSize, sizeof(char));
+
+                if (!str.ptr)
+                {
+                    puts("Нехватает памяти");
+                    return false;
+                }
+
+                ReadLine(&str, bufferSize, "Про кого вы хотите узнать все подробности:");
+
+                GetObjectDefinition(akinator, &str);
+
+                free(str.ptr);
+                break;
+            }
+            case menuActions::QUIT:
+            {
+                puts("Работа программы завершена :(");
+                return true;
+            }
+            default:
+            {
+                puts("Ошибка ввода.");
+                break;
+            }
+        }
+    }
+
+    return false;
+}
+
+static void ReadLine(String* str, size_t bufferSize, const char* msg)
+{
+    assert(str);
+    assert(msg);
+
+    char* res = nullptr;
+    while (res == nullptr)
+    {
+        puts(msg);
+        res = fgets(str->ptr, bufferSize, stdin);
+    }
+
+    res = strchr(str->ptr, '\n');
+    if (res)
+    {
+        *res = '\0';
+        str->length = res - str->ptr;
+    }
+}
+
+static void ChoseAction()
+{
+    puts("Выберите действие:");
+
+    for (int st = 0; st < sizeof(menuItems) / sizeof(menuItems[0]); st++)
+        printf("%c) %-20s%c", menuLetters[st], menuItems[st], (st % 2 == 1)? '\n': ' ');
 }

@@ -47,6 +47,7 @@ struct Node
 struct Tree
 {
     Node* root;
+    size_t treeLength;
 };
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -63,9 +64,11 @@ bool TreeNodeDestructor(Node* node);
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
+bool TreeAddRightNode(Node* parent, Node* child);
+
 bool TreeAddLeftNode(Node* parent, Node* child);
 
-bool TreeAddRightNode(Node* parent, Node* child);
+void TreeMeasure(Tree* tree, Node* node, size_t length);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -75,6 +78,8 @@ void TreeVisit(Node* node, void (*nodeFunction)(Node*), VisitCallType type);
 Node* TreeFindObject(Node* node, treeType object);
 
 Node* TreeFindObjectStack(Node* node, treeType object, Stack* stk);
+
+Node* GetNodeFromStack(Stack* stk, size_t index);
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\

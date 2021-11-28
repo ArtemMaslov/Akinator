@@ -12,14 +12,17 @@ int main()
 
     FILE* file = fopen("D:\\язык C\\Akinator\\tree1.txt", "r");
 
-    if (file)
+    if (!file)
     {
-        Akinator akinator = AkinatorConstructor(file);
-
-        AkinatorDestructor(&akinator);
-    }
-    else
         puts("ќшибка открыти€ файла");
+        return 0;
+    }
+
+    Akinator akinator = AkinatorConstructor(file);
+        
+    ShowMenu(&akinator);
+
+    AkinatorDestructor(&akinator);
 
     return 0;
 }
