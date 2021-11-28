@@ -1,0 +1,15 @@
+﻿Build started 28.11.2021 20:21:32.
+Logging verbosity is set to: Normal.     1>Project "D:\Язык C\Akinator\Akinator\Akinator.vcxproj" on node 2 (Build target(s)).
+     1>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(411,5): error MSB8020: The build tools for v143 (Platform Toolset = 'v143') cannot be found. To build using the v143 build tools, please install v143 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution".
+     1>Done Building Project "D:\Язык C\Akinator\Akinator\Akinator.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+       "D:\Язык C\Akinator\Akinator\Akinator.vcxproj" (Build target) (1) ->
+       (PrepareForBuild target) -> 
+         C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(411,5): error MSB8020: The build tools for v143 (Platform Toolset = 'v143') cannot be found. To build using the v143 build tools, please install v143 build tools.  Alternatively, you may upgrade to the current Visual Studio tools by selecting the Project menu or right-click the solution, and then selecting "Retarget solution".
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.01

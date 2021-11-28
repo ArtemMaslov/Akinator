@@ -46,6 +46,8 @@ static void ChoseAction();
 
 static void PrintNodeValue(const char* prefix, String* str, const char* postfix, FILE* file);
 
+static void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* child);
+
 
 Akinator AkinatorConstructor(FILE* file)
 {
@@ -228,46 +230,26 @@ static void PrintNodeValue(const char* prefix, String* str, const char* postfix,
 
 void GetObjectDefinition(Akinator* akinator, String* str)
 {
-    Node* node = TreeFindObject(akinator->tree.root, *str);
+    Stack stk = {};
 
-    if (!node)
+    StackConstructor(&stk, sizeof(Node*), akinator->tree.treeLength);
+    
+    Node* n1 = TreeFindObjectStack(akinator->tree.root, *str, &stk);
+    
+    if (!n1)
     {
         puts("Строка не найдена в дереве");
         return;
     }
 
-    PrintNodeValue(nullptr, &node->value, nullptr, stdout);
+    PrintNodeValue(nullptr, str, " - ", stdout);
 
-    while (node->parent && node->parent->parent)
-    {
-        if (node->parent->nodeRight == node)
-        {
-            PrintNodeValue(" ", &node->parent->value, node->parent->parent? ", " : " и ", stdout);
-        }
-        else
-        {
-            PrintNodeValue(" не ", &node->parent->value, node->parent->parent? ", " : " и ", stdout);
-        }
+    PrintObjectInformation(0, stk.stackSize, &stk, akinator->tree.root);
 
-        node = node->parent;
-    }
-    
-    if (node->parent)
-    {
-        if (node->parent->nodeRight == node)
-        {
-            PrintNodeValue(" ", &node->parent->value, ".\n", stdout);
-        }
-        else
-        {
-            PrintNodeValue(" не ", &node->parent->value, ".\n", stdout);
-        }
-    }
-    else
-        PrintNodeValue(". Ни да, ни нет. Просто ", &node->value, ".\n", stdout);
+    puts(".");
 }
 
-void CompareObjects(Akinator* akinator, String str1, String str2)
+void CompareObjects(Akinator* akinator, String* str1, String* str2)
 {
     Stack stk1 = {};
     Stack stk2 = {};
@@ -275,8 +257,8 @@ void CompareObjects(Akinator* akinator, String str1, String str2)
     StackConstructor(&stk1, sizeof(Node*), akinator->tree.treeLength);
     StackConstructor(&stk2, sizeof(Node*), akinator->tree.treeLength);
     
-    Node* n1 = TreeFindObjectStack(akinator->tree.root, str1, &stk1);
-    Node* n2 = TreeFindObjectStack(akinator->tree.root, str2, &stk2);
+    Node* n1 = TreeFindObjectStack(akinator->tree.root, *str1, &stk1);
+    Node* n2 = TreeFindObjectStack(akinator->tree.root, *str2, &stk2);
 
     if (!n1)
     {
@@ -289,81 +271,85 @@ void CompareObjects(Akinator* akinator, String str1, String str2)
         puts("Строка не найдена в дереве");
         return;
     }
+
+    PrintNodeValue(nullptr, str1, nullptr, stdout);
+    PrintNodeValue(" и ", str2, nullptr, stdout);
+
+    Node* child1 = GetNodeFromStack(&stk1, 0);
+    Node* child2 = GetNodeFromStack(&stk2, 0);
+    
+    size_t sameCount = 0;
     size_t index = 0;
 
-    PrintNodeValue(nullptr, &str1, nullptr, stdout);
-    PrintNodeValue(" и ", &str2, nullptr, stdout);
-
-    Node* parent = GetNodeFromStack(&stk1, index);
-    index++;
-    Node* child1 = GetNodeFromStack(&stk1, index);
-    Node* child2 = GetNodeFromStack(&stk2, index);
-
-    if (child1 == child2)
+    while (index < stk1.stackSize && index < stk2.stackSize && child1 == child2)
     {
-        puts(" похожи тем, что они ");
-        size_t sameCount = 0;
-        while (child1 && child1 == child2)
-        {
-            sameCount++;
-        }
-
-        while (child1 && child1 == child2)
-        {
-            PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &parent->value, " и ", stdout);
-
-            index++;
-            parent = child1;
-            child1 = GetNodeFromStack(&stk1, index);
-            child2 = GetNodeFromStack(&stk2, index);
-            if (child1 == child2)
-                puts("\b\b\b, ");
-        }
-    }
-    
-    PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &parent->value, ".\n", stdout);
-
-    PrintNodeValue(nullptr, &str1, nullptr, stdout);
-    PrintNodeValue(" и ", &str2, " различаются тем, что ", stdout);
-
-    PrintNodeValue(nullptr, &str1, nullptr, stdout);
-
-    parent = child1->parent;
-    while (index < stk1.stackSize)
-    {
-        PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &child1->value, ", ", stdout);
-        
-        parent = child1;
+        sameCount++;
         index++;
         child1 = GetNodeFromStack(&stk1, index);
-        
-        if (index == stk1.stackSize)
-            puts("\b\b и");
+        child2 = GetNodeFromStack(&stk2, index);
     }
 
-    PrintNodeValue(parent->nodeLeft == child1->parent? "не " : "", &child1->value, ", а ", stdout);
-    
-    PrintNodeValue(nullptr, &str2, nullptr, stdout);
-    
-    index = minIndex;
-    parent = child2->parent;
-    while (index < stk2.stackSize)
+    index = 0;
+    if (index < sameCount)
     {
-        PrintNodeValue(parent->nodeLeft == child2->parent? "не " : "", &child2->value, ", ", stdout);
+        fputs(" похожи тем, что они ", stdout);
         
-        parent = child2;
-        index++;
-        child2 = GetNodeFromStack(&stk2, index);
-        
-        if (index == stk2.stackSize)
-            puts("\b\b и ");
+        child1 = GetNodeFromStack(&stk1, 0);
+
+        PrintObjectInformation(0, sameCount, &stk1, child1);
+        puts(".");
     }
-    PrintNodeValue(nullptr, &child2->value, ".\n", stdout);
+    else
+        fputs(" ничем не похожи.\n", stdout);
+    
+    child1 = GetNodeFromStack(&stk1, sameCount);
+    child2 = GetNodeFromStack(&stk2, sameCount);
+        
+    PrintNodeValue(nullptr, str1, nullptr, stdout);
+    PrintNodeValue(" и ", str2, nullptr, stdout);
+
+    if (stk1.stackSize - sameCount - 1 > 0 || stk2.stackSize - sameCount - 1 > 0)
+    {
+        fputs(" различаются тем, что ", stdout);
+
+        PrintNodeValue(nullptr, str1, " - ", stdout);
+    
+        PrintObjectInformation(sameCount, stk1.stackSize, &stk1, child1);
+
+        PrintNodeValue(", а ", str2, " ", stdout);
+    
+        PrintObjectInformation(sameCount, stk2.stackSize, &stk2, child2);
+        puts(".");
+    }
+    else
+        fputs(" абсолютно похожи.\n", stdout);
+}
+
+static void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* child)
+{
+    for (size_t index = indexFrom; index < indexTo - 1; index++)
+    {
+        Node* next =  GetNodeFromStack(stk, index + 1);
+
+        if (indexTo - index > 3)
+        {
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, ", ", stdout);
+        }
+        else if (indexTo - index == 3)
+        {
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, " и ", stdout);
+        }
+        else
+        {
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, nullptr, stdout);
+        }
+    
+        child = next;
+    }
 }
 
 void PlayAkinator(Akinator* akinator)
 {
-
 }
 
 bool ShowMenu(Akinator* akinator)
@@ -405,7 +391,7 @@ bool ShowMenu(Akinator* akinator)
                 ReadLine(&str1, bufferSize, "Введите первый сравниваемый объект:");
                 ReadLine(&str2, bufferSize, "Введите второй сравниваемый объект:");
 
-                CompareObjects(akinator, str1, str2);
+                CompareObjects(akinator, &str1, &str2);
 
                 free(str1.ptr);
                 free(str2.ptr);

@@ -27,7 +27,7 @@ void PlayAkinator(Akinator* akinator);
 
 void GetObjectDefinition(Akinator* akinator, String* str);
 
-void CompareObjects(Akinator* akinator, String str1, String str2);
+void CompareObjects(Akinator* akinator, String* str1, String* str2);
 
 
 #endif
