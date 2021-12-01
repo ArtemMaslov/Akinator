@@ -7,7 +7,10 @@
 bool ReadFile(Text* text, FILE* file)
 {
     assert(text);
-    assert(file);
+    //assert(file);
+
+    if (!file)
+        return false;
 
     text->buffer       = nullptr;
     text->bufferSize   = 0;

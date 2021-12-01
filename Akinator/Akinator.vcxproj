@@ -146,9 +146,11 @@
     <ClCompile Include="..\StackLibrary\StackProtection.cpp" />
     <ClCompile Include="..\StringLibrary\StringLibrary.cpp" />
     <ClCompile Include="Akinator.cpp" />
-    <ClCompile Include="AkinatorTree.cpp" />
+    <ClCompile Include="FileIO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Logs\Logs.h" />
@@ -158,7 +160,11 @@
     <ClInclude Include="..\StringLibrary\StringLibrary.h" />
     <ClInclude Include="Akinator.h" />
     <ClInclude Include="AkinatorTree.h" />
+    <ClInclude Include="Config.h" />
+    <ClInclude Include="FileIO.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Tree.h" />
+    <ClInclude Include="Voice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

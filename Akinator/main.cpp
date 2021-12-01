@@ -3,6 +3,7 @@
 
 
 #include "Akinator.h"
+#include "Voice.h"
 
 
 int main()
@@ -10,13 +11,13 @@ int main()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    FILE* file = fopen("D:\\язык C\\Akinator\\tree1.txt", "r");
+    FILE* file = fopen("D:\\язык C\\Akinator\\treee.txt", "r");
 
-    if (!file)
+    /*if (!file)
     {
         puts("ќшибка открыти€ файла");
         return 0;
-    }
+    }*/
 
     Akinator akinator = AkinatorConstructor(file);
         

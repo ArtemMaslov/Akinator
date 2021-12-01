@@ -10,14 +10,22 @@ struct Akinator
     Text  text;
     Tree  tree;
     FILE* file;
+
+    bool IsTreeEmpty;
 };
+
+enum QuestionAnswer
+{
+    YES = 1,
+    NO  = 0
+};
+
+const size_t MAX_STRING_LENGTH = 100;
 
 
 Akinator AkinatorConstructor(FILE* file);
 
 void AkinatorDestructor(Akinator* akinator);
-
-void WriteTreeToFile(Akinator* akinator, FILE* file);
 
 bool CreateGraph(Akinator* akinator, const char* outFileName);
 

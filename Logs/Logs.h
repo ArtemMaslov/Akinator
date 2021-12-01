@@ -7,30 +7,30 @@ extern int TextOffset;
 
 enum LogLevel
 {
-    DEBUG = 0,
-    WARNING = 1,
-    ERROR = 2
+    LOG_DEBUG = 0,
+    LOG_WARNING = 1,
+    LOG_ERROR = 2
 };
 
 /**
- * @brief         Конструктор файла логов.
- * @param file    Указатель на поток вывода.
- * @param caption Заголовок файла логов
+ * @brief             Конструктор файла логов.
+ * @param logFileName Имя выходного файла с логами.
+ * @param caption     Заголовок файла логов.
 */
-void LogConstructor(FILE *file, const char* caption);
+bool LogConstructor(const char* logFileName, const char* caption);
 
 /**
  * @brief      Закрывает файл логов.
- * @param file Указатель на поток вывода.
 */
-void LogDestructor(FILE* file);
+void LogDestructor();
 
 /**
- * @brief         Добавляет строку в файл логов.
- * @param file    Указатель на поток вывода.
- * @param message Строка, которую необходимо добавить.
+ * @brief                    Добавляет строку в файл логов.
+ * @param file               Указатель на поток вывода.
+ * @param message            Строка, которую необходимо добавить.
+ * @param dublicateToConsole Если true, то дублирует сообщения в консоль. По умолчанию false
 */
-void LogLine(FILE* file, const char* message, int error = DEBUG);
+void LogLine(const char* message, int logLevel, bool dublicateToConsole = false);
 
 
 #endif // !LOGS_H_

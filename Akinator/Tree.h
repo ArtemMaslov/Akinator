@@ -1,7 +1,7 @@
 #ifndef MY_TREE_H
 #define MY_TREE_H
 
-
+#include "Config.h"
 #include "..\StringLibrary\StringLibrary.h"
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
@@ -70,6 +70,8 @@ bool TreeAddLeftNode(Node* parent, Node* child);
 
 void TreeMeasure(Tree* tree, Node* node, size_t length);
 
+bool IsLeaf(Node* node);
+
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
@@ -84,7 +86,13 @@ Node* GetNodeFromStack(Stack* stk, size_t index);
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 
-bool CreateTreeGraph(const char* fileName, Tree* tree);
+#ifdef GRAPHVIZ
 
+bool CreateTreeGraph(const char* fileName, Tree* tree);
+#else
+
+#define CreateTreeGraph(fileName, tree) false;
+
+#endif
 
 #endif
