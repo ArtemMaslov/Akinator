@@ -80,13 +80,7 @@
     <ClInclude Include="..\Logs\Logs.h">
       <Filter>Logs</Filter>
     </ClInclude>
-    <ClInclude Include="AkinatorTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileIO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Voice.h">

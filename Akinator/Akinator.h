@@ -22,19 +22,53 @@ enum QuestionAnswer
 
 const size_t MAX_STRING_LENGTH = 100;
 
-
+/**
+ * @brief      Констркуктор структуры акинатор.
+ * @param file Указатель на файл, из которого нужно прочитать дерево.
+ * @return     Структуру akinator.
+*/
 Akinator AkinatorConstructor(FILE* file);
 
+/**
+ * @brief          Дестркуктор структуры акинатор.
+ * @param akinator Указатель на структуру akinator.
+*/
 void AkinatorDestructor(Akinator* akinator);
 
+/**
+ * @brief             Строит граф по дереву.
+ * @param akinator    Указатель на структуру akinator.
+ * @param outFileName Имя выходного файла.
+ * @return            true в случае успеха, false в случае ошибки.
+*/
 bool CreateGraph(Akinator* akinator, const char* outFileName);
 
+/**
+ * @brief          Показать меню для выбора режима работы акинатора.
+ * @param akinator Указатель на структуру akinator.
+ * @return         true в случае успеха, false в случае ошибки. 
+*/
 bool ShowMenu(Akinator* akinator);
 
+/**
+ * @brief          Режим игры в акинатор. Программа пытается угадать объект, задуманный пользователем.
+ * @param akinator Указатель на структуру akinator.
+*/
 void PlayAkinator(Akinator* akinator);
 
+/**
+ * @brief          Режим определения объекта.
+ * @param akinator Указатель на структуру akinator.
+ * @param str      Определяемый объект.
+*/
 void GetObjectDefinition(Akinator* akinator, String* str);
 
+/**
+ * @brief          Режим сравнения объектов.
+ * @param akinator Указатель на структуру akinator.
+ * @param str1     Первый объект.
+ * @param str2     Второй объект.
+*/
 void CompareObjects(Akinator* akinator, String* str1, String* str2);
 
 

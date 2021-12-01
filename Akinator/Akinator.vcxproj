@@ -159,10 +159,8 @@
     <ClInclude Include="..\StackLibrary\StackProtection.h" />
     <ClInclude Include="..\StringLibrary\StringLibrary.h" />
     <ClInclude Include="Akinator.h" />
-    <ClInclude Include="AkinatorTree.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="FileIO.h" />
-    <ClInclude Include="Menu.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>
