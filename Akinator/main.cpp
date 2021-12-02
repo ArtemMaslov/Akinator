@@ -6,24 +6,35 @@
 #include "Voice.h"
 
 
-int main()
+int main(int argc, char* argv[])
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 
-    FILE* file = fopen("D:\\Язык C\\Akinator\\treee.txt", "r");
-
-    /*if (!file)
+    FILE* file = nullptr;
+    
+    if (argc > 1)
     {
-        puts("Ошибка открытия файла");
-        return 0;
-    }*/
+        file = fopen(argv[1], "r");
+    }
+    else
+        file = fopen("tree.txt", "r");
 
-    Akinator akinator = AkinatorConstructor(file);
+    if (!file)
+    {
+        puts("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°");
+        return 0;
+    }
+
+    Akinator akinator = {};
+    
+    AkinatorConstructor(file, &akinator);
+    
+    fclose(file);
         
     ShowMenu(&akinator);
 
     AkinatorDestructor(&akinator);
-
+         
     return 0;
 }

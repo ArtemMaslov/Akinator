@@ -13,7 +13,7 @@
 
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
-/// Уважаемый пользователь, следующие определения нужно изменить для конкретной задачи
+/// РЈРІР°Р¶Р°РµРјС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ, СЃР»РµРґСѓСЋС‰РёРµ РѕРїСЂРµРґРµР»РµРЅРёСЏ РЅСѓР¶РЅРѕ РёР·РјРµРЅРёС‚СЊ РґР»СЏ РєРѕРЅРєСЂРµС‚РЅРѕР№ Р·Р°РґР°С‡Рё
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///***///***///---\\\***\\\***\\\___///***___***\\\___///***///***///---\\\***\\\***\\\
 ///  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   \\\
@@ -80,7 +80,7 @@ static void CreateNodeGraph(FILE* file, Node* node, size_t parentId, bool IsRigh
 
 bool TreeConstructor(Tree* tree)
 {
-    LogLine("Вызван TreeConstructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeConstructor()", LOG_DEBUG);
     assert(tree);
 
     tree->root = nullptr;
@@ -90,14 +90,14 @@ bool TreeConstructor(Tree* tree)
 
 Node* TreeNodeConstructor(const treeType* value)
 {
-    LogLine("Вызван TreeNodeConstructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeNodeConstructor()", LOG_DEBUG);
     //assert(value);
 
     Node* node = (Node*)calloc(1, sizeof(Node));
 
     if (!node)
     {
-        LogLine("NodeConstructor: не хватает памяти для создания нового узла", LOG_ERROR, true);
+        LogLine("NodeConstructor: РЅРµ С…РІР°С‚Р°РµС‚ РїР°РјСЏС‚Рё РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ СѓР·Р»Р°", LOG_ERROR, true);
         return nullptr;
     }
 
@@ -112,7 +112,7 @@ Node* TreeNodeConstructor(const treeType* value)
 
 bool TreeDestructor(Tree* tree) 
 {
-    LogLine("Вызван TreeDestructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeDestructor()", LOG_DEBUG);
     // assert(tree);
     
     if (tree)
@@ -123,7 +123,7 @@ bool TreeDestructor(Tree* tree)
 
 bool TreeNodeDestructor(Node* node)
 {
-    LogLine("Вызван TreeNodeDestructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeNodeDestructor()", LOG_DEBUG);
     // assert(node);
 
     if (node)
@@ -133,6 +133,8 @@ bool TreeNodeDestructor(Node* node)
         if (node->nodeRight)
             TreeNodeDestructor(node->nodeRight);
 
+        if (node->value.ptr)
+            free (node->value.ptr);
         free(node);
     }
 
@@ -144,7 +146,7 @@ bool TreeNodeDestructor(Node* node)
 
 bool TreeAddLeftNode(Node* parent, Node* child)
 {
-    LogLine("Вызван TreeAddLeftNode()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeAddLeftNode()", LOG_DEBUG);
     assert(parent);
     assert(child);
 
@@ -156,7 +158,7 @@ bool TreeAddLeftNode(Node* parent, Node* child)
 
 bool TreeAddRightNode(Node* parent, Node* child)
 {
-    LogLine("Вызван TreeAddRightNode()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeAddRightNode()", LOG_DEBUG);
     assert(parent);
     assert(child);
 
@@ -168,11 +170,11 @@ bool TreeAddRightNode(Node* parent, Node* child)
 
 void TreeMeasure(Tree* tree, Node* node, size_t length)
 {
-    LogLine("Вызван TreeMeasure()", LOG_DEBUG);
-    assert(tree);
-    assert(node);
+    LogLine("Р’С‹Р·РІР°РЅ TreeMeasure()", LOG_DEBUG);
+    //assert(tree);
+    //assert(node);
 
-    if (!node)
+    if (!node || !tree)
     {
         tree->treeLength = 0;
         return;
@@ -203,7 +205,7 @@ bool IsLeaf(Node* node)
 
 void TreeVisit(Node* node, void (*nodeFunction)(Node*), VisitCallType type)
 {
-    LogLine("Вызван TreeVisit()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeVisit()", LOG_DEBUG);
     assert(node);
     assert(nodeFunction);
     
@@ -225,7 +227,7 @@ void TreeVisit(Node* node, void (*nodeFunction)(Node*), VisitCallType type)
 
 Node* TreeFindObject(Node* node, treeType object)
 {
-    LogLine("Вызван TreeFindObject()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeFindObject()", LOG_DEBUG);
     assert(node);
     
     if (CompareObject(object, node->value) == 0)
@@ -244,7 +246,7 @@ Node* TreeFindObject(Node* node, treeType object)
 
 Node* TreeFindObjectStack(Node* node, treeType object, Stack* stk)
 {
-    LogLine("Вызван TreeFindObjectStack()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ TreeFindObjectStack()", LOG_DEBUG);
     assert(stk);
     assert(node);
 
@@ -269,7 +271,7 @@ Node* TreeFindObjectStack(Node* node, treeType object, Stack* stk)
 
 Node* GetNodeFromStack(Stack* stk, size_t index)
 {
-    LogLine("Вызван GetNodeFromStack()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ GetNodeFromStack()", LOG_DEBUG);
     assert(stk);
 
     Node** nodeptr = (Node**)StackGetElemAt(stk, index);
@@ -287,7 +289,7 @@ Node* GetNodeFromStack(Stack* stk, size_t index)
 
 bool CreateTreeGraph(const char* outFileName, Tree* tree)
 {
-    LogLine("Вызван CreateTreeGraph()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ CreateTreeGraph()", LOG_DEBUG);
     assert(outFileName);
     assert(tree);
 
@@ -295,7 +297,7 @@ bool CreateTreeGraph(const char* outFileName, Tree* tree)
 
     if (!file)
     {
-        LogLine("CreateTreeGraph: ошибка открытия файла.", LOG_ERROR, true);
+        LogLine("CreateTreeGraph: РѕС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°.", LOG_ERROR, true);
         return false;
     }
 
@@ -311,7 +313,7 @@ bool CreateTreeGraph(const char* outFileName, Tree* tree)
 
     if (!cmd)
     {
-        LogLine("CreateNodeGraph: не хватает памяти для генерации команды.", LOG_ERROR, true);
+        LogLine("CreateNodeGraph: РЅРµ С…РІР°С‚Р°РµС‚ РїР°РјСЏС‚Рё РґР»СЏ РіРµРЅРµСЂР°С†РёРё РєРѕРјР°РЅРґС‹.", LOG_ERROR, true);
         return false;
     }
 
@@ -329,7 +331,7 @@ bool CreateTreeGraph(const char* outFileName, Tree* tree)
 
 static void CreateNodeGraph(FILE* file, Node* node, size_t parentId, bool IsRight)
 {
-    LogLine("Вызван CreateNodeGraph()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ CreateNodeGraph()", LOG_DEBUG);
     assert(file);
     assert(node);
 
@@ -343,7 +345,7 @@ static void CreateNodeGraph(FILE* file, Node* node, size_t parentId, bool IsRigh
 
     if (!wcharStr)
     {
-        LogLine("CreateNodeGraph: не хватает памяти для генерации строки.", LOG_ERROR, true);
+        LogLine("CreateNodeGraph: РЅРµ С…РІР°С‚Р°РµС‚ РїР°РјСЏС‚Рё РґР»СЏ РіРµРЅРµСЂР°С†РёРё СЃС‚СЂРѕРєРё.", LOG_ERROR, true);
         return;
     }
 

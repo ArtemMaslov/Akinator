@@ -150,6 +150,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Voice.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="FileIO.h" />
     <ClInclude Include="Tree.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Voice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

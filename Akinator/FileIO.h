@@ -3,57 +3,67 @@
 
 
 #include "Tree.h"
+#include "Voice.h"
 #include "Akinator.h"
 #include "..\StringLibrary\StringLibrary.h"
 
 /**
- * @brief            Прочитать строку и записать её в стркуктуру String.
- * @param str        Указатель на строку.
- * @param bufferSize Максимальная длина строки.
- * @param msg        Сообщение, которое необходимо вывести в консоль
+ * @brief            РџСЂРѕС‡РёС‚Р°С‚СЊ СЃС‚СЂРѕРєСѓ Рё Р·Р°РїРёСЃР°С‚СЊ РµС‘ РІ СЃС‚СЂРєСѓРєС‚СѓСЂСѓ String.
+ * @param str        РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ.
+ * @param bufferSize РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё.
+ * @param msg        РЎРѕРѕР±С‰РµРЅРёРµ, РєРѕС‚РѕСЂРѕРµ РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹РІРµСЃС‚Рё РІ РєРѕРЅСЃРѕР»СЊ
 */
 void ReadString(String* str, size_t bufferSize, const char* msg);
 
 /**
- * @brief            Прочитать строку в массив char[].
- * @param buffer     Указатель на строку.
- * @param bufferSize Максимальная длина строки.
- * @return           Указатель на строку в случае успеха, nullptr в случае ошибки.
+ * @brief            РџСЂРѕС‡РёС‚Р°С‚СЊ СЃС‚СЂРѕРєСѓ РІ РјР°СЃСЃРёРІ char[].
+ * @param buffer     РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ.
+ * @param bufferSize РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё.
+ * @return           РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, nullptr РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё.
 */
 char* ReadLine(char* buffer, size_t bufferSize);
 
 /**
- * @brief            Прочитать ответ на вопрос (да/нет).
- * @param buffer     Указатель на строку.
- * @param bufferSize Максимальная длина строки.
- * @return           true если ответ да, false если ответ нет.
+ * @brief            РџСЂРѕС‡РёС‚Р°С‚СЊ РѕС‚РІРµС‚ РЅР° РІРѕРїСЂРѕСЃ (РґР°/РЅРµС‚).
+ * @param buffer     РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ.
+ * @param bufferSize РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё.
+ * @return           true РµСЃР»Рё РѕС‚РІРµС‚ РґР°, false РµСЃР»Рё РѕС‚РІРµС‚ РЅРµС‚.
 */
 bool ReadQuestionAnswer(char* buffer, size_t bufferSize);
 
 /**
- * @brief           Вывести информацию об объекте из дерева.
- * @param indexFrom Индекс начального узла в дереве.
- * @param indexTo   Индекс конечного узла в дереве.
- * @param stk       Указатель на стек.
- * @param child     Начальный узел.
+ * @brief           Р’С‹РІРµСЃС‚Рё РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± РѕР±СЉРµРєС‚Рµ РёР· РґРµСЂРµРІР°.
+ * @param indexFrom РРЅРґРµРєСЃ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ СѓР·Р»Р° РІ РґРµСЂРµРІРµ.
+ * @param indexTo   РРЅРґРµРєСЃ РєРѕРЅРµС‡РЅРѕРіРѕ СѓР·Р»Р° РІ РґРµСЂРµРІРµ.
+ * @param stk       РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚РµРє.
+ * @param child     РќР°С‡Р°Р»СЊРЅС‹Р№ СѓР·РµР».
+ * @param buffer    Р“РѕР»РѕСЃРѕРІРѕР№ Р±СѓС„РµСЂ.
 */
-void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* child);
+void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* child, VoiceBuffer* buffer);
 
 /**
- * @brief         Вывести информацию об узле.
- * @param prefix  Префиксное сообщение.
- * @param str     Указатель на строку (значение узла).
- * @param postfix Постфиксное сообщение.
- * @param file    Выходной файл.
+ * @brief             Р’С‹РІРµСЃС‚Рё РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± СѓР·Р»Рµ.
+ * @param prefix      РџСЂРµС„РёРєСЃРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ.
+ * @param str         РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ (Р·РЅР°С‡РµРЅРёРµ СѓР·Р»Р°).
+ * @param postfix     РџРѕСЃС‚С„РёРєСЃРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ.
+ * @param voiceBuffer Р“РѕР»РѕСЃРѕРІРѕР№ Р±СѓС„РµСЂ
+ * @param file        Р’С‹С…РѕРґРЅРѕР№ С„Р°Р№Р».
 */
-void PrintNodeValue(const char* prefix, String* str, const char* postfix, FILE* file);
+void PrintNodeValue(const char* prefix, String* str, const char* postfix, VoiceBuffer* voiceBuffer, FILE* file);
 
 /**
- * @brief          Записать дерево в файл.
- * @param akinator Указатель на структуру akinator.
- * @param file     Выходной файл.
+ * @brief          Р—Р°РїРёСЃР°С‚СЊ РґРµСЂРµРІРѕ РІ С„Р°Р№Р».
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @param file     Р’С‹С…РѕРґРЅРѕР№ С„Р°Р№Р».
 */
 void WriteTreeToFile(Akinator* akinator, FILE* file);
+
+/**
+ * @brief          РџСЂРµРѕР±СЂР°Р·СѓРµС‚ С‚РµРєСЃС‚ РёР· С„Р°Р№Р»Р° РІ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґРµСЂРµРІРѕ.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ Р°РєРёРЅР°С‚РѕСЂ.
+ * @return         true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё
+*/
+bool ParseText(Akinator* akinator);
 
 
 #endif

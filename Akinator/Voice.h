@@ -6,84 +6,51 @@
 
 #ifdef AKINATOR_VOICE
 
-const size_t SPEAK_BUFFER_SIZE = 1024;
+const size_t VOICE_BUFFER_SIZE = 1024;
+
+struct VoiceBuffer
+{
+    /// РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ
+    char buffer[VOICE_BUFFER_SIZE];
+    /// РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё, РІРєР»СЋС‡Р°СЏ 0
+    size_t capacity;
+    /// РўРµРєСѓС‰Р°СЏ РґР»РёРЅР° СЃС‚СЂРѕРєРё, РЅРµ РІРєР»СЋС‡Р°СЏ 0
+    size_t size;
+};
 
 /**
- * @brief  Конструктор озвучки.
- * @return true в случае успеха, false в случае ошибки.
+ * @brief  РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РѕР·РІСѓС‡РєРё.
+ * @return true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё.
 */
 bool VoiceConstructor();
 
 /**
- * @brief Деструктор озвучки. Вызывается автоматически.
+ * @brief Р”РµСЃС‚СЂСѓРєС‚РѕСЂ РѕР·РІСѓС‡РєРё. Р’С‹Р·С‹РІР°РµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.
 */
 void VoiceDestructoror();
 
 /**
- * @brief     Произнести текст.
- * @param ptr Указатель на строку.
- * @return    true в случае успеха, false в случае ошибки.
+ * @brief     РџСЂРѕРёР·РЅРµСЃС‚Рё С‚РµРєСЃС‚.
+ * @param ptr РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂРѕРєСѓ.
+ * @return    true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё.
 */
 bool SpeakUp(const char* ptr);
 
 /**
- * @brief Очистить внутренний буфер озвучки.
+ * @brief        Р”РѕР±Р°РІР»СЏРµС‚ СЃС‚СЂРѕРєСѓ РІ РєРѕРЅРµС† Р±СѓС„РµСЂР°
+ * @param buffer Р‘СѓС„РµСЂ, РІ РєРѕС‚РѕСЂС‹Р№ РґРѕРїРёС€РµС‚СЃСЏ СЃС‚СЂРѕРєР°
+ * @param ptr    РЎС‚СЂРѕРєР°
+ * @param length РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРёРјРІРѕР»РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РґРѕР±Р°РІРёС‚СЊ
+ * @return       false, РµСЃР»Рё Р±СѓС„РµСЂ РїРµСЂРµРїРѕР»РЅРµРЅ, true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°
 */
-void ClearSpeakBuffer();
+bool AddStringToBuffer(VoiceBuffer* buffer, const char* ptr, size_t length = -1);
 
-/**
- * @brief Озвучить содержимое внутреннего буфера.
-*/
-void SpeakUpBuffer();
-
-/**
- * @brief     Добавить строку во внутренний буфер.
- * @param ptr Указатель на строку.
- * @return    true в случае успеха, false в случае ошибки.
-*/
-bool AddStringToSpeakBuffer(const char* ptr);
-
-/**
- * @brief         Добавить содержимое узла во внутренний буфер.
- * @param prefix  Префиксное сообщение.
- * @param str     Указатель на строку (значение узла).
- * @param postfix Постфиксное сообщение.
- * @return        true в случае успеха, false в случае ошибки.
-*/
-bool AddNodeToSpeakBuffer(const char* prefix, String* str, const char* postfix);
-
-/// Выводит информацию об узле в консоль и добавляет его во внутренний буфер.
-#define PRINT_NODE_AND_SPEAK(prefix, str, postfix)                          \
-        {                                                                   \
-            PrintNodeValue(prefix, str, postfix, stdout);                   \
-            AddNodeToSpeakBuffer(prefix, str, postfix);                     \
-        }
-
-/// Выводит строку в консоль и добавляет её во внутренний буфер.
-#define PRINT_AND_SPEAK(ptr)                                                \
-        {                                                                   \
-            fputs(ptr, stdout);                                             \
-            AddStringToSpeakBuffer(ptr);                                    \
-        }
 #else
 
 #define VoiceConstructor() false;
 #define VoiceDestructoror();
 #define SpeakUp(ptr) false;
-#define ClearSpeakBuffer();
-#define SpeakUpBuffer();
-#define AddStringToSpeakBuffer(ptr) false;
-#define AddNodeToSpeakBuffer(prefix, str, postfix) false;
-
-#define PRINT_NODE_AND_SPEAK(prefix, str, postfix)                          \
-        {                                                                   \
-            PrintNodeValue(prefix, str, postfix, stdout);                   \
-        }
-
-#define PRINT_AND_SPEAK(ptr)                                                \
-        {                                                                   \
-            fputs(ptr, stdout);                                             \
-        }
+#define AddStringToBuffer(buffer, ptr) false;
 
 #endif
 

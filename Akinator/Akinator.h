@@ -23,51 +23,52 @@ enum QuestionAnswer
 const size_t MAX_STRING_LENGTH = 100;
 
 /**
- * @brief      Констркуктор структуры акинатор.
- * @param file Указатель на файл, из которого нужно прочитать дерево.
- * @return     Структуру akinator.
+ * @brief          РљРѕРЅСЃС‚СЂРєСѓРєС‚РѕСЂ СЃС‚СЂСѓРєС‚СѓСЂС‹ Р°РєРёРЅР°С‚РѕСЂ.
+ * @param file     РЈРєР°Р·Р°С‚РµР»СЊ РЅР° С„Р°Р№Р», РёР· РєРѕС‚РѕСЂРѕРіРѕ РЅСѓР¶РЅРѕ РїСЂРѕС‡РёС‚Р°С‚СЊ РґРµСЂРµРІРѕ.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @return         true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё.
 */
-Akinator AkinatorConstructor(FILE* file);
+bool AkinatorConstructor(FILE* file, Akinator* akinator);
 
 /**
- * @brief          Дестркуктор структуры акинатор.
- * @param akinator Указатель на структуру akinator.
+ * @brief          Р”РµСЃС‚СЂРєСѓРєС‚РѕСЂ СЃС‚СЂСѓРєС‚СѓСЂС‹ Р°РєРёРЅР°С‚РѕСЂ.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
 */
 void AkinatorDestructor(Akinator* akinator);
 
 /**
- * @brief             Строит граф по дереву.
- * @param akinator    Указатель на структуру akinator.
- * @param outFileName Имя выходного файла.
- * @return            true в случае успеха, false в случае ошибки.
+ * @brief             РЎС‚СЂРѕРёС‚ РіСЂР°С„ РїРѕ РґРµСЂРµРІСѓ.
+ * @param akinator    РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @param outFileName РРјСЏ РІС‹С…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°.
+ * @return            true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё.
 */
 bool CreateGraph(Akinator* akinator, const char* outFileName);
 
 /**
- * @brief          Показать меню для выбора режима работы акинатора.
- * @param akinator Указатель на структуру akinator.
- * @return         true в случае успеха, false в случае ошибки. 
+ * @brief          РџРѕРєР°Р·Р°С‚СЊ РјРµРЅСЋ РґР»СЏ РІС‹Р±РѕСЂР° СЂРµР¶РёРјР° СЂР°Р±РѕС‚С‹ Р°РєРёРЅР°С‚РѕСЂР°.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @return         true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р°, false РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё. 
 */
 bool ShowMenu(Akinator* akinator);
 
 /**
- * @brief          Режим игры в акинатор. Программа пытается угадать объект, задуманный пользователем.
- * @param akinator Указатель на структуру akinator.
+ * @brief          Р РµР¶РёРј РёРіСЂС‹ РІ Р°РєРёРЅР°С‚РѕСЂ. РџСЂРѕРіСЂР°РјРјР° РїС‹С‚Р°РµС‚СЃСЏ СѓРіР°РґР°С‚СЊ РѕР±СЉРµРєС‚, Р·Р°РґСѓРјР°РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
 */
 void PlayAkinator(Akinator* akinator);
 
 /**
- * @brief          Режим определения объекта.
- * @param akinator Указатель на структуру akinator.
- * @param str      Определяемый объект.
+ * @brief          Р РµР¶РёРј РѕРїСЂРµРґРµР»РµРЅРёСЏ РѕР±СЉРµРєС‚Р°.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @param str      РћРїСЂРµРґРµР»СЏРµРјС‹Р№ РѕР±СЉРµРєС‚.
 */
 void GetObjectDefinition(Akinator* akinator, String* str);
 
 /**
- * @brief          Режим сравнения объектов.
- * @param akinator Указатель на структуру akinator.
- * @param str1     Первый объект.
- * @param str2     Второй объект.
+ * @brief          Р РµР¶РёРј СЃСЂР°РІРЅРµРЅРёСЏ РѕР±СЉРµРєС‚РѕРІ.
+ * @param akinator РЈРєР°Р·Р°С‚РµР»СЊ РЅР° СЃС‚СЂСѓРєС‚СѓСЂСѓ akinator.
+ * @param str1     РџРµСЂРІС‹Р№ РѕР±СЉРµРєС‚.
+ * @param str2     Р’С‚РѕСЂРѕР№ РѕР±СЉРµРєС‚.
 */
 void CompareObjects(Akinator* akinator, String* str1, String* str2);
 

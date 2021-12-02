@@ -9,6 +9,7 @@
 #include "Tree.h"
 #include "Voice.h"
 #include "Akinator.h"
+#include "Utilities.h"
 
 
 #include "..\Logs\Logs.h"
@@ -20,49 +21,59 @@ static void ProcessUnknownObject(Tree* tree, Node* node, QuestionAnswer answer);
 
 static void ProcessPredictedObject(Node* node);
 
-static bool ParseText(Akinator* akinator);
-
 static Node* AkinatorNodeConstructor();
 
+/// Р’С‹РІРѕРґРёС‚ СЃС‚СЂРѕРєСѓ РІ РєРѕРЅСЃРѕР»СЊ Рё РґРѕР±Р°РІР»СЏРµС‚ РµС‘ РІРѕ РІРЅСѓС‚СЂРµРЅРЅРёР№ Р±СѓС„РµСЂ РґР»СЏ РѕР·РІСѓС‡РєРё.
+#define PRINT_AND_SPEAK(ptr)                                                \
+        {                                                                   \
+            fputs(ptr, stdout);                                             \
+            AddStringToSpeakBuffer(ptr);                                    \
+        }
 
-Akinator AkinatorConstructor(FILE* file)
+
+bool AkinatorConstructor(FILE* file, Akinator* akinator)
 {
+    assert(akinator);
     //assert(file);
 
     static bool librariesInited = false;
 
     if (!librariesInited)
     {
-        LogConstructor("Akinator.html", "Лог работы программы Акинатор.");
+        LogConstructor("Akinator.html", "Р›РѕРі СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ РђРєРёРЅР°С‚РѕСЂ.");
         VoiceConstructor();
     }
 
-    LogLine("Вызван AkinatorConstructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ AkinatorConstructor()", LOG_DEBUG);
 
-    Akinator akinator = {};
-    akinator.file = file;
-    akinator.IsTreeEmpty = true;
+    akinator->file = file;
+    akinator->IsTreeEmpty = true;
     bool result = false;
 
-    TreeConstructor(&akinator.tree);
+    TreeConstructor(&akinator->tree);
 
-    result = ReadFile(&akinator.text, file);
+    result = ReadFile(&akinator->text, file);
 
-    if (result)
-    {
-        result = ParseText(&akinator);
-        TreeMeasure(&akinator.tree, akinator.tree.root, 0);
+    if (!result)
+        return result;
 
-        if (akinator.tree.root && akinator.tree.root->value.ptr)
-            akinator.IsTreeEmpty = false;
-    }
+    result = ParseText(akinator);
+    
+    if (!result)
+        return result;
 
-    return akinator;
+    TreeMeasure(&akinator->tree, akinator->tree.root, 0);
+
+    if (akinator->tree.root && akinator->tree.root->value.ptr)
+        akinator->IsTreeEmpty = false;
+    
+    return result;
 }
 
 void AkinatorDestructor(Akinator* akinator)
 {
-    LogLine("Вызван AkinatorDestructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ AkinatorDestructor()", LOG_DEBUG);
+
     assert(akinator);
 
     TextDestructor(&akinator->text);
@@ -70,103 +81,10 @@ void AkinatorDestructor(Akinator* akinator)
     TreeDestructor(&akinator->tree);
 }
 
-static bool ParseText(Akinator* akinator)
-{
-    LogLine("Вызван ParseText()", LOG_DEBUG);
-    assert(akinator);
-
-    unsigned char* ptr = (unsigned char*)akinator->text.buffer;
-    size_t lBracketsCount = 0;
-    size_t rBracketsCount = 0;
-    size_t openedBrackets = 0;
-
-    while (*ptr)
-    {
-        if (*ptr == '{')
-            lBracketsCount++;
-        else if (*ptr == '}')
-            rBracketsCount++;
-
-        if (lBracketsCount < rBracketsCount)
-        {
-            puts("Ошибочная скобочная последовательность.\n"
-                 "Количество закрывающих скобок '{' больше количества открывающих '}'");
-            return false;
-        }
-
-        ptr++;
-    }
-    
-    Stack stk = {};
-    StackConstructor(&stk, sizeof(Node*), lBracketsCount);
-
-    ptr = (unsigned char*)akinator->text.buffer;
-
-    while (*ptr)
-    {
-        if (*ptr == '{')
-        {
-            Node* node = TreeNodeConstructor(nullptr);
-
-            if (!node)
-                return false;
-            
-            unsigned char* strStart = nullptr;
-
-            ptr++;
-            while (*ptr != '}' && *ptr != '{')
-            {
-                if (!strStart && !isspace(*ptr))
-                    strStart = ptr;
-                ptr++;
-            }
-            ptr--;
-
-            if (strStart)
-            {
-                String string =
-                {
-                    (char*)strStart,
-                    (size_t)(ptr - strStart + 1)
-                };
-                node->value = string;
-                strStart = nullptr;
-            }
-            StackPush(&stk, &node);
-        }
-        else if (*ptr == '}')
-        {
-            Node** _childNode  = (Node**)StackPop(&stk);
-            Node** _parentNode = (Node**)StackPop(&stk);
-
-            if (!_childNode)
-                return false;
-
-            if (!_parentNode) // Корень дерева
-            {
-                akinator->tree.root = *_childNode;
-                break;
-            }
-
-            Node* childNode  = *_childNode;
-            Node* parentNode = *_parentNode;
-
-            if (parentNode->nodeRight == nullptr)
-                TreeAddRightNode(parentNode, childNode);
-            else
-                TreeAddLeftNode(parentNode, childNode);
-
-            StackPush(&stk, &parentNode);
-        }
-        ptr++;
-    }
-
-    return true;
-}
-
 bool CreateGraph(Akinator* akinator, const char* outFileName)
 {
-    LogLine("Вызван CreateGraph()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ CreateGraph()", LOG_DEBUG);
+
     assert(akinator);
     assert(outFileName);
 
@@ -175,59 +93,69 @@ bool CreateGraph(Akinator* akinator, const char* outFileName)
 
 void GetObjectDefinition(Akinator* akinator, String* str)
 {
-    LogLine("Вызван GetObjectDefinition()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ GetObjectDefinition()", LOG_DEBUG);
+
     assert(akinator);
     assert(str);
 
     Stack stk = {};
+    VoiceBuffer buffer = {};
+    buffer.capacity = VOICE_BUFFER_SIZE;
 
     StackConstructor(&stk, sizeof(Node*), akinator->tree.treeLength);
     
-    Node* n1 = TreeFindObjectStack(akinator->tree.root, *str, &stk);
+    Node* node = TreeFindObjectStack(akinator->tree.root, *str, &stk);
     
-    if (!n1)
+    if (!node)
     {
-        LogLine("GetObjectDefinition: Строка не найдена в дереве", LOG_ERROR, true);
+        LogLine("GetObjectDefinition: РЎС‚СЂРѕРєР° РЅРµ РЅР°Р№РґРµРЅР° РІ РґРµСЂРµРІРµ", LOG_ERROR, true);
         return;
     }
 
-    ClearSpeakBuffer();
+    SetConsoleColor(YELLOW, BLACK);
 
-    PRINT_NODE_AND_SPEAK(nullptr, str, " - ");
+    PrintNodeValue(nullptr, str, " - ", &buffer, stdout);
+    
+    SetConsoleColor(WHITE, BLACK);
 
-    PrintObjectInformation(0, stk.stackSize, &stk, akinator->tree.root);
+    PrintObjectInformation(0, stk.stackSize, &stk, akinator->tree.root, &buffer);
 
-    SpeakUpBuffer();
+    SpeakUp(buffer.buffer);
 
     puts(".");
 }
 
 void CompareObjects(Akinator* akinator, String* str1, String* str2)
 {
-    LogLine("Вызван CompareObjects()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ CompareObjects()", LOG_DEBUG);
+
     assert(akinator);
     assert(str1);
     assert(str2);
 
     Stack stk1 = {};
     Stack stk2 = {};
+    VoiceBuffer buffer = {};
+    buffer.capacity = VOICE_BUFFER_SIZE;
 
     StackConstructor(&stk1, sizeof(Node*), akinator->tree.treeLength);
     StackConstructor(&stk2, sizeof(Node*), akinator->tree.treeLength);
     
-    Node* n1 = TreeFindObjectStack(akinator->tree.root, *str1, &stk1);
-    Node* n2 = TreeFindObjectStack(akinator->tree.root, *str2, &stk2);
+    Node* node1 = TreeFindObjectStack(akinator->tree.root, *str1, &stk1);
+    Node* node2 = TreeFindObjectStack(akinator->tree.root, *str2, &stk2);
 
-    if (!n1 || !n2)
+    if (!node1 || !node2)
     {
-        LogLine("CompareObjects: Строка не найдена в дереве", LOG_ERROR, true);
+        LogLine("CompareObjects: РЎС‚СЂРѕРєР° РЅРµ РЅР°Р№РґРµРЅР° РІ РґРµСЂРµРІРµ", LOG_ERROR, true);
         return;
     }
-
-    ClearSpeakBuffer();
     
-    PRINT_NODE_AND_SPEAK(nullptr, str1, nullptr);
-    PRINT_NODE_AND_SPEAK(" и ", str2, nullptr);
+    SetConsoleColor(YELLOW, BLACK);
+
+    PrintNodeValue(nullptr, str1, nullptr, &buffer, stdout);
+    PrintNodeValue(" Рё ", str2, nullptr, &buffer, stdout);
+    
+    SetConsoleColor(WHITE, BLACK);
 
     Node* child1 = GetNodeFromStack(&stk1, 0);
     Node* child2 = GetNodeFromStack(&stk2, 0);
@@ -246,49 +174,75 @@ void CompareObjects(Akinator* akinator, String* str1, String* str2)
     index = 0;
     if (index < sameCount - 1)
     {
-        PRINT_AND_SPEAK(" похожи тем, что они ");
+        SetConsoleColor(GREEN, BLACK);
+
+        fputs(" РїРѕС…РѕР¶Рё С‚РµРј, С‡С‚Рѕ РѕРЅРё ", stdout);
+        AddStringToBuffer(&buffer, " РїРѕС…РѕР¶Рё С‚РµРј, С‡С‚Рѕ РѕРЅРё ");
+
+        SetConsoleColor(WHITE, BLACK);
         
         child1 = GetNodeFromStack(&stk1, 0);
 
-        PrintObjectInformation(0, sameCount, &stk1, child1);
+        PrintObjectInformation(0, sameCount, &stk1, child1, &buffer);
         puts(".");
     }
     else
-        PRINT_AND_SPEAK(" ничем не похожи.\n");
+    {
+        SetConsoleColor(DARK_RED, BLACK);
+        fputs(" РЅРёС‡РµРј РЅРµ РїРѕС…РѕР¶Рё.\n", stdout);
+        AddStringToBuffer(&buffer, " РЅРёС‡РµРј РЅРµ РїРѕС…РѕР¶Рё.");
+        SetConsoleColor(WHITE, BLACK);
+    }
     
     child1 = GetNodeFromStack(&stk1, sameCount);
     child2 = GetNodeFromStack(&stk2, sameCount);
-        
-    PRINT_NODE_AND_SPEAK(nullptr, str1, nullptr);
-    PRINT_NODE_AND_SPEAK(" и ", str2, nullptr);
+    
+    
+    SetConsoleColor(YELLOW, BLACK);
+
+    PrintNodeValue(nullptr, str1, nullptr, &buffer, stdout);
+    PrintNodeValue(" Рё ", str2, nullptr, &buffer, stdout);
+    
+    SetConsoleColor(WHITE, BLACK);
 
     if (stk1.stackSize - sameCount - 1 > 0 || stk2.stackSize - sameCount - 1 > 0)
     {
-        PRINT_AND_SPEAK(" различаются тем, что ");
+        SetConsoleColor(DARK_RED, BLACK);
+        fputs(" СЂР°Р·Р»РёС‡Р°СЋС‚СЃСЏ С‚РµРј, С‡С‚Рѕ ", stdout);
+        AddStringToBuffer(&buffer, " СЂР°Р·Р»РёС‡Р°СЋС‚СЃСЏ С‚РµРј, С‡С‚Рѕ ");
+        SetConsoleColor(WHITE, BLACK);
 
-        PRINT_NODE_AND_SPEAK(nullptr, str1, " - ");
+        PrintNodeValue(nullptr, str1, " - ", &buffer, stdout);
     
-        PrintObjectInformation(sameCount, stk1.stackSize, &stk1, child1);
+        PrintObjectInformation(sameCount, stk1.stackSize, &stk1, child1, &buffer);
 
-        PRINT_NODE_AND_SPEAK(", а ", str2, " ");
+        PrintNodeValue(", Р° ", str2, " ", &buffer, stdout);
     
-        PrintObjectInformation(sameCount, stk2.stackSize, &stk2, child2);
+        PrintObjectInformation(sameCount, stk2.stackSize, &stk2, child2, &buffer);
         puts(".");
     }
     else
-        PRINT_AND_SPEAK(" абсолютно похожи.\n");
-    
-    SpeakUpBuffer();
+    {
+        SetConsoleColor(GREEN, BLACK);
+        fputs(" Р°Р±СЃРѕР»СЋС‚РЅРѕ РїРѕС…РѕР¶Рё.\n", stdout);
+        AddStringToBuffer(&buffer, " Р°Р±СЃРѕР»СЋС‚РЅРѕ РїРѕС…РѕР¶Рё.");
+        SetConsoleColor(WHITE, BLACK);
+    }
 
-    puts(".");
+    SpeakUp(buffer.buffer);
 }
 
 void PlayAkinator(Akinator* akinator)
 {
-    LogLine("Вызван PlayAkinator()", LOG_DEBUG);
-    assert(akinator);
+    LogLine("Р’С‹Р·РІР°РЅ PlayAkinator()", LOG_DEBUG);
 
-    puts("Загадайте какой-нибудь объект, а я попробую его отгадать.");
+    assert(akinator);
+    
+    SetConsoleColor(YELLOW, BLACK);
+
+    puts("Р—Р°РіР°РґР°Р№С‚Рµ РєР°РєРѕР№-РЅРёР±СѓРґСЊ РѕР±СЉРµРєС‚, Р° СЏ РїРѕРїСЂРѕР±СѓСЋ РµРіРѕ РѕС‚РіР°РґР°С‚СЊ.");
+    
+    SetConsoleColor(WHITE, BLACK);
 
     if (akinator->IsTreeEmpty)
     {
@@ -303,7 +257,9 @@ void PlayAkinator(Akinator* akinator)
 
     do
     {
-        PrintNodeValue("Это ", &ptr->value, "? (да/нет)\n", stdout);
+        SetConsoleColor(DARK_YELLOW, BLACK);
+        PrintNodeValue("Р­С‚Рѕ ", &ptr->value, "? (РґР°/РЅРµС‚)\n", nullptr, stdout);
+        SetConsoleColor(WHITE, BLACK);
 
         switch (ReadQuestionAnswer(buffer, MAX_STRING_LENGTH))
         {
@@ -340,11 +296,14 @@ void PlayAkinator(Akinator* akinator)
 
 static void ProcessUnknownObject(Tree* tree, Node* node, QuestionAnswer answer)
 {
-    LogLine("Вызван ProcessUnknownObject()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ ProcessUnknownObject()", LOG_DEBUG);
+
     assert(tree);
     //assert(node);
-
-    puts("Слишком сложно! Не могу отгадать загаданный вами объект. Мне нужна подсказка. Что вы загадали?");
+    
+    SetConsoleColor(RED, BLACK);
+    puts("РЎР»РёС€РєРѕРј СЃР»РѕР¶РЅРѕ! РќРµ РјРѕРіСѓ РѕС‚РіР°РґР°С‚СЊ Р·Р°РіР°РґР°РЅРЅС‹Р№ РІР°РјРё РѕР±СЉРµРєС‚. РњРЅРµ РЅСѓР¶РЅР° РїРѕРґСЃРєР°Р·РєР°. Р§С‚Рѕ РІС‹ Р·Р°РіР°РґР°Р»Рё?");
+    SetConsoleColor(WHITE, BLACK);
 
     Node* newChildNode = AkinatorNodeConstructor();
 
@@ -352,7 +311,9 @@ static void ProcessUnknownObject(Tree* tree, Node* node, QuestionAnswer answer)
 
     if (node == nullptr)
     {        
-        PrintNodeValue("Каким же свойством обладает ", &newChildNode->value, "?\n", stdout);
+        SetConsoleColor(CYAN, BLACK);
+        PrintNodeValue("РљР°РєРёРј Р¶Рµ СЃРІРѕР№СЃС‚РІРѕРј РѕР±Р»Р°РґР°РµС‚ ", &newChildNode->value, "?\n", nullptr, stdout);
+        SetConsoleColor(WHITE, BLACK);
 
         Node* newParentNode = AkinatorNodeConstructor();
             
@@ -377,28 +338,39 @@ static void ProcessUnknownObject(Tree* tree, Node* node, QuestionAnswer answer)
 
 static void ProcessPredictedObject(Node* node)
 {
-    LogLine("Вызван ProcessPredictedObject()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ ProcessPredictedObject()", LOG_DEBUG);
+
     assert(node);
 
-    PrintNodeValue("Вы загадали ", &node->value, "? (да/нет)", stdout);
+    SetConsoleColor(GREEN, BLACK);
+    PrintNodeValue("Р’С‹ Р·Р°РіР°РґР°Р»Рё ", &node->value, "? (РґР°/РЅРµС‚)", nullptr, stdout);
+    SetConsoleColor(WHITE, BLACK);
     
     char buffer[MAX_STRING_LENGTH] = {};
 
     switch (ReadQuestionAnswer(buffer, MAX_STRING_LENGTH))
     {
         case YES:
-            puts("Это было очевидно!");
+            SetConsoleColor(YELLOW, BLACK);
+            puts("Р­С‚Рѕ Р±С‹Р»Рѕ РѕС‡РµРІРёРґРЅРѕ!");
+            SetConsoleColor(WHITE, BLACK);
             break;
         case NO:
-            puts("Я в смятении. Кто же это был?");
+            SetConsoleColor(RED, BLACK);
+            puts("РЇ РІ СЃРјСЏС‚РµРЅРёРё. РљС‚Рѕ Р¶Рµ СЌС‚Рѕ Р±С‹Р»?");
+            SetConsoleColor(WHITE, BLACK);
 
             Node* newRightNode = AkinatorNodeConstructor();
 
             ReadString(&newRightNode->value, MAX_STRING_LENGTH, nullptr);
             
-            PrintNodeValue("Чем же отличается ", &newRightNode->value, " от ", stdout);
-            PrintNodeValue(nullptr, &node->value, "? ", stdout);
-            PrintNodeValue(nullptr, &newRightNode->value, " - \n", stdout);
+            SetConsoleColor(CYAN, BLACK);
+            PrintNodeValue("Р§РµРј Р¶Рµ РѕС‚Р»РёС‡Р°РµС‚СЃСЏ ", &newRightNode->value, " РѕС‚ ", nullptr, stdout);
+            PrintNodeValue(nullptr, &node->value, "? ", nullptr, stdout);
+            PrintNodeValue("Р§С‚РѕР±С‹ РїРѕР»СѓС‡РёС‚СЊ РєСЂР°СЃРёРІСѓСЋ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…, РѕС‚РІРµС‚СЊС‚Рµ РЅР° РІРѕРїСЂРѕСЃ: ", &newRightNode->value, " - СЌС‚Рѕ?\n", nullptr, stdout);
+            fputs("РќР°С‡РёРЅР°Р№С‚Рµ РїСЂРµРґР»РѕР¶РµРЅРёРµ СЃ РјР°Р»РµРЅСЊРєРѕР№ Р±СѓРєРІС‹, РІ РєРѕРЅС†Рµ РЅРµ СЃС‚Р°РІСЊС‚Рµ Р·РЅР°Рє РїСЂРµРїРёРЅР°РЅРёСЏ.\n", stdout);
+            fputs("РќР°РїСЂРёРјРµСЂ, РґР»СЏ \"РІРѕР»РєР°\" СЃР»РµРґСѓСЋС‰РёРµ РѕРїРёСЃР°РЅРёСЏ Р±СѓРґСѓС‚ СѓРґР°С‡РЅС‹РјРё: \"СЃРµСЂРѕРµ Р¶РёРІРѕС‚РЅРѕРµ\", \"Р¶РёРІРѕС‚РЅРѕРµ, РєРѕС‚РѕСЂРѕРµ РІРѕРµС‚ РЅР° Р›СѓРЅСѓ\", \"С…РёС‰РЅРёРє\", \"Р¶РёРІРѕС‚РЅРѕРµ, РєРѕС‚РѕСЂРѕРµ РѕС…РѕС‚РёС‚СЃСЏ РЅР° РѕР»РµРЅРµР№\".", stdout);
+            SetConsoleColor(WHITE, BLACK);
 
             Node* newLeftNode = AkinatorNodeConstructor();
             
@@ -416,7 +388,7 @@ static void ProcessPredictedObject(Node* node)
 
 static Node* AkinatorNodeConstructor()
 {
-    LogLine("Вызван AkinatorNodeConstructor()", LOG_DEBUG);
+    LogLine("Р’С‹Р·РІР°РЅ AkinatorNodeConstructor()", LOG_DEBUG);
 
     Node* newNode = TreeNodeConstructor(nullptr);
 
@@ -427,7 +399,7 @@ static Node* AkinatorNodeConstructor()
             
     if (!newNode->value.ptr)
     {
-        LogLine("ProcessPredictedObject: Не хвает памяти для строки нового узла.", LOG_ERROR, true);
+        LogLine("ProcessPredictedObject: РќРµ С…РІР°РµС‚ РїР°РјСЏС‚Рё РґР»СЏ СЃС‚СЂРѕРєРё РЅРѕРІРѕРіРѕ СѓР·Р»Р°.", LOG_ERROR, true);
         return nullptr;
     }
 
