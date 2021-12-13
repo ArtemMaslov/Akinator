@@ -133,7 +133,7 @@ bool TreeNodeDestructor(Node* node)
         if (node->nodeRight)
             TreeNodeDestructor(node->nodeRight);
 
-        if (node->value.ptr)
+        if (node->value.ptr && node->allocated)
             free (node->value.ptr);
         free(node);
     }

@@ -194,8 +194,8 @@ void CompareObjects(Akinator* akinator, String* str1, String* str2)
         SetConsoleColor(WHITE, BLACK);
     }
     
-    child1 = GetNodeFromStack(&stk1, sameCount);
-    child2 = GetNodeFromStack(&stk2, sameCount);
+    child1 = GetNodeFromStack(&stk1, sameCount - 1);
+    child2 = GetNodeFromStack(&stk2, sameCount - 1);
     
     
     SetConsoleColor(YELLOW, BLACK);
@@ -205,7 +205,7 @@ void CompareObjects(Akinator* akinator, String* str1, String* str2)
     
     SetConsoleColor(WHITE, BLACK);
 
-    if (stk1.stackSize - sameCount - 1 > 0 || stk2.stackSize - sameCount - 1 > 0)
+    if (stk1.stackSize - sameCount > 0 || stk2.stackSize - sameCount > 0)
     {
         SetConsoleColor(DARK_RED, BLACK);
         fputs(" различаются тем, что ", stdout);
@@ -214,11 +214,11 @@ void CompareObjects(Akinator* akinator, String* str1, String* str2)
 
         PrintNodeValue(nullptr, str1, " - ", &buffer, stdout);
     
-        PrintObjectInformation(sameCount, stk1.stackSize, &stk1, child1, &buffer);
+        PrintObjectInformation(sameCount - 1, stk1.stackSize, &stk1, child1, &buffer);
 
         PrintNodeValue(", а ", str2, " ", &buffer, stdout);
     
-        PrintObjectInformation(sameCount, stk2.stackSize, &stk2, child2, &buffer);
+        PrintObjectInformation(sameCount - 1, stk2.stackSize, &stk2, child2, &buffer);
         puts(".");
     }
     else
@@ -369,7 +369,7 @@ static void ProcessPredictedObject(Node* node)
             PrintNodeValue(nullptr, &node->value, "? ", nullptr, stdout);
             PrintNodeValue("Чтобы получить красивую базу данных, ответьте на вопрос: ", &newRightNode->value, " - это?\n", nullptr, stdout);
             fputs("Начинайте предложение с маленькой буквы, в конце не ставьте знак препинания.\n", stdout);
-            fputs("Например, для \"волка\" следующие описания будут удачными: \"серое животное\", \"животное, которое воет на Луну\", \"хищник\", \"животное, которое охотится на оленей\".", stdout);
+            fputs("Например, для \"волка\" следующие описания будут удачными: \"серое животное\", \"животное, которое воет на Луну\", \"хищник\", \"животное, которое охотится на оленей\".\n", stdout);
             SetConsoleColor(WHITE, BLACK);
 
             Node* newLeftNode = AkinatorNodeConstructor();
