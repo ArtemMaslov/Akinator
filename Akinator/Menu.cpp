@@ -19,45 +19,45 @@
 
 static const char* menuItems[] =
 {
-    "РРіСЂР°С‚СЊ",
-    "РћРїСЂРµРґРµР»РёС‚СЊ",
-    "РЎСЂР°РІРЅРёС‚СЊ",
+    "Играть",
+    "Определить",
+    "Сравнить",
     nullptr,
-    "РЎС‡РёС‚Р°С‚СЊ РёР· С„Р°Р№Р»Р°",
-    "Р—Р°РїРёСЃР°С‚СЊ РІ С„Р°Р№Р»",
+    "Считать из файла",
+    "Записать в файл",
 #ifdef GRAPHVIZ
-    "РџРѕСЃС‚СЂРѕРёС‚СЊ РіСЂР°С„",
+    "Построить граф",
 #endif
     nullptr,
     nullptr,
-    "Р’С‹С…РѕРґ",
+    "Выход",
 };
 
 static const char menuLetters[]
 {
-    'Рё',
-    'Рѕ',
-    'СЃ',
+    'и',
+    'о',
+    'с',
     '\0',
-    'С‡',
-    'Р·',
+    'ч',
+    'з',
 #ifdef GRAPHVIZ
-    'Рі',
+    'г',
 #endif
     '\0',
     '\0',
-    'РІ'
+    'в'
 };
 
 enum menuActions
 {
-    PLAY_AKINATOR = 'Рё',
-    DEF_OBJECTS   = 'Рѕ',
-    CMP_OBJECTS   = 'СЃ',
-    QUIT          = 'РІ',
-    READ_FILE     = 'С‡',
-    WRITE_TO_FILE = 'Р·',
-    BUILD_GRAPH   = 'Рі'
+    PLAY_AKINATOR = 'и',
+    DEF_OBJECTS   = 'о',
+    CMP_OBJECTS   = 'с',
+    QUIT          = 'в',
+    READ_FILE     = 'ч',
+    WRITE_TO_FILE = 'з',
+    BUILD_GRAPH   = 'г'
 };
 
 
@@ -76,13 +76,13 @@ static void ProcessDefineObjects(Akinator* akinator);
 
 bool ShowMenu(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ShowMenu()", LOG_DEBUG);
+    LogLine("Вызван ShowMenu()", LOG_DEBUG);
 
     assert(akinator);
     
-    SetConsoleColor(VIOLET, BLACK);
+    SetConsoleColor(GREEN, BLACK);
 
-    puts("Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ РёРіСЂСѓ РђРєРёРЅР°С‚РѕСЂ!");
+    puts("Добро пожаловать в игру Акинатор!");
     
     SetConsoleColor(WHITE, BLACK);
 
@@ -94,7 +94,7 @@ bool ShowMenu(Akinator* akinator)
         if (scanf(" %c", &c) == 0)
         {
             SetConsoleColor(RED, BLACK);
-            puts("РќРµ СѓРґР°С‘С‚СЃСЏ РїСЂРѕС‡РёС‚Р°С‚СЊ РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ");
+            puts("Не удаётся прочитать входные данные");
             SetConsoleColor(WHITE, BLACK);
         }
 
@@ -123,11 +123,11 @@ bool ShowMenu(Akinator* akinator)
                 break;
             case menuActions::QUIT:
                 SetConsoleColor(RED, BLACK);
-                puts("Р Р°Р±РѕС‚Р° РїСЂРѕРіСЂР°РјРјС‹ Р·Р°РІРµСЂС€РµРЅР° :(");
+                puts("Работа программы завершена :(");
                 return true;
             default:
                 SetConsoleColor(RED, BLACK);
-                puts("РћС€РёР±РєР° РІРІРѕРґР°.");
+                puts("Ошибка ввода.");
                 SetConsoleColor(WHITE, BLACK);
                 break;
         }
@@ -139,15 +139,15 @@ bool ShowMenu(Akinator* akinator)
 
 static void ProcessDefineObjects(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ProcessDefineObjects()", LOG_DEBUG);
+    LogLine("Вызван ProcessDefineObjects()", LOG_DEBUG);
 
     assert(akinator);
     
     if (!akinator->tree.root)
     {
         SetConsoleColor(YELLOW, BLACK);
-        puts("Р‘Р°Р·Р° РґР°РЅРЅС‹С… РїСѓСЃС‚Р°, СЃРЅР°С‡Р°Р»Р° Р·Р°РїРѕР»РЅРёС‚Рµ РµС‘.\n"
-             "Р›РёР±Рѕ РІРѕСЃРїРѕР»СЊР·СѓР№С‚РµСЃСЊ РіРѕС‚РѕРІРѕР№, Р»РёР±Рѕ СЃРѕР·РґР°С‘С‚Рµ СЃРІРѕСЋ, РёРіСЂР°СЏ РІ Р°РєРёРЅР°С‚РѕСЂ (РїСѓРЅРєС‚ РёРіСЂР°С‚СЊ).");
+        puts("База данных пуста, сначала заполните её.\n"
+             "Либо воспользуйтесь готовой, либо создаёте свою, играя в акинатор (пункт играть).");
         SetConsoleColor(WHITE, BLACK);
         return;
     }
@@ -160,7 +160,7 @@ static void ProcessDefineObjects(Akinator* akinator)
     
     SetConsoleColor(CYAN, BLACK);
 
-    ReadString(&str, MAX_STRING_LENGTH, "РџСЂРѕ РєРѕРіРѕ РІС‹ С…РѕС‚РёС‚Рµ СѓР·РЅР°С‚СЊ РІСЃРµ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё:");
+    ReadString(&str, MAX_STRING_LENGTH, "Про кого вы хотите узнать все подробности:");
     
     SetConsoleColor(WHITE, BLACK);
 
@@ -169,7 +169,7 @@ static void ProcessDefineObjects(Akinator* akinator)
 
 static void ProcessBuilfGraph(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ProcessBuilfGraph()", LOG_DEBUG);
+    LogLine("Вызван ProcessBuilfGraph()", LOG_DEBUG);
 
     assert(akinator);
 
@@ -178,7 +178,7 @@ static void ProcessBuilfGraph(Akinator* akinator)
 
     SetConsoleColor(CYAN, BLACK);
 
-    puts("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°, Р»РёР±Рѕ РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ РґР»СЏ Р·РЅР°С‡РµРЅРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ:");
+    puts("Введите название файла, либо пустую строку для значения по умолчанию:");
     
     SetConsoleColor(WHITE, BLACK);
 
@@ -193,7 +193,7 @@ static void ProcessBuilfGraph(Akinator* akinator)
 
 static void ProcessReadFile(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ProcessReadFile()", LOG_DEBUG);
+    LogLine("Вызван ProcessReadFile()", LOG_DEBUG);
 
     assert(akinator);
 
@@ -201,7 +201,7 @@ static void ProcessReadFile(Akinator* akinator)
     
     SetConsoleColor(CYAN, BLACK);
 
-    puts("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°, Р»РёР±Рѕ РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ РґР»СЏ Р·РЅР°С‡РµРЅРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ:");
+    puts("Введите название файла, либо пустую строку для значения по умолчанию:");
 
     SetConsoleColor(WHITE, BLACK);
 
@@ -223,12 +223,12 @@ static void ProcessReadFile(Akinator* akinator)
         fclose(inputFile);
     }
     else
-        LogLine("ProcessReadFile: РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°", LOG_ERROR, true);
+        LogLine("ProcessReadFile: Ошибка открытия файла", LOG_ERROR, true);
 }
 
 static void ProcessWriteToFile(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ProcessWriteToFile()", LOG_DEBUG);
+    LogLine("Вызван ProcessWriteToFile()", LOG_DEBUG);
 
     assert(akinator);
 
@@ -236,7 +236,7 @@ static void ProcessWriteToFile(Akinator* akinator)
     
     SetConsoleColor(CYAN, BLACK);
 
-    puts("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°, Р»РёР±Рѕ РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ РґР»СЏ Р·РЅР°С‡РµРЅРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ:");
+    puts("Введите название файла, либо пустую строку для значения по умолчанию:");
     
     SetConsoleColor(WHITE, BLACK);
 
@@ -254,20 +254,20 @@ static void ProcessWriteToFile(Akinator* akinator)
         fclose(outputFile);
     }
     else
-        LogLine("ProcessReadFile: РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°", LOG_ERROR, true);
+        LogLine("ProcessReadFile: Ошибка открытия файла", LOG_ERROR, true);
 }
 
 static void ProcessCompareObject(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ProcessCompareObject()", LOG_DEBUG);
+    LogLine("Вызван ProcessCompareObject()", LOG_DEBUG);
 
     assert(akinator);
 
     if (!akinator->tree.root)
     {
         SetConsoleColor(YELLOW, BLACK);
-        puts("Р‘Р°Р·Р° РґР°РЅРЅС‹С… РїСѓСЃС‚Р°, СЃРЅР°С‡Р°Р»Р° Р·Р°РїРѕР»РЅРёС‚Рµ РµС‘.\n"
-             "Р›РёР±Рѕ РІРѕСЃРїРѕР»СЊР·СѓР№С‚РµСЃСЊ РіРѕС‚РѕРІРѕР№, Р»РёР±Рѕ СЃРѕР·РґР°С‘С‚Рµ СЃРІРѕСЋ, РёРіСЂР°СЏ РІ Р°РєРёРЅР°С‚РѕСЂ (РїСѓРЅРєС‚ РёРіСЂР°С‚СЊ).");
+        puts("База данных пуста, сначала заполните её.\n"
+             "Либо воспользуйтесь готовой, либо создаёте свою, играя в акинатор (пункт играть).");
         SetConsoleColor(WHITE, BLACK);
         return;
     }
@@ -283,8 +283,8 @@ static void ProcessCompareObject(Akinator* akinator)
 
     SetConsoleColor(CYAN, BLACK);
 
-    ReadString(&str1, MAX_STRING_LENGTH, "Р’РІРµРґРёС‚Рµ РїРµСЂРІС‹Р№ СЃСЂР°РІРЅРёРІР°РµРјС‹Р№ РѕР±СЉРµРєС‚:");
-    ReadString(&str2, MAX_STRING_LENGTH, "Р’РІРµРґРёС‚Рµ РІС‚РѕСЂРѕР№ СЃСЂР°РІРЅРёРІР°РµРјС‹Р№ РѕР±СЉРµРєС‚:");
+    ReadString(&str1, MAX_STRING_LENGTH, "Введите первый сравниваемый объект:");
+    ReadString(&str2, MAX_STRING_LENGTH, "Введите второй сравниваемый объект:");
 
     SetConsoleColor(WHITE, BLACK);
 
@@ -293,13 +293,13 @@ static void ProcessCompareObject(Akinator* akinator)
 
 static void ChoseAction()
 {
-    LogLine("Р’С‹Р·РІР°РЅ ChoseAction()", LOG_DEBUG);
+    LogLine("Вызван ChoseAction()", LOG_DEBUG);
     
-    SetConsoleColor(DARK_VIOLET, BLACK);
+    SetConsoleColor(DARK_GREEN, BLACK);
 
-    puts("Р’С‹Р±РµСЂРёС‚Рµ РґРµР№СЃС‚РІРёРµ:");
+    puts("Выберите действие:");
     
-    SetConsoleColor(VIOLET, BLACK);
+    SetConsoleColor(GREEN, BLACK);
 
     for (int st = 0; st < sizeof(menuItems) / sizeof(menuItems[0]); st++)
     {

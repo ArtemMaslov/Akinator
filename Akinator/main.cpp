@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     if (!file)
     {
-        puts("РћС€РёР±РєР° РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°");
+        puts("Ошибка открытия файла");
         return 0;
     }
 

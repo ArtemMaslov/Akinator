@@ -32,8 +32,12 @@
 *.app
 
 
-.vs/Akinator/*
-*/Debug/*
-Debug/*
-x64/*
+.vs
+Debug
+Release
+Akinator/Debug
+Akinator/Release
+x86
+x64
 out.txt
+Akinator/treeGraph.gv

@@ -21,7 +21,7 @@ static void PrintNodeToFile(Node* node, FILE* file, size_t recursiveLength);
 
 void ReadString(String* str, size_t bufferSize, const char* msg)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ReadString()", LOG_DEBUG);
+    LogLine("Вызван ReadString()", LOG_DEBUG);
     assert(str);
     //assert(msg);
     str->length = 0;
@@ -48,13 +48,13 @@ void ReadString(String* str, size_t bufferSize, const char* msg)
                 ;
         }
         if (str->length == 0)
-            puts("РЎС‚СЂРѕРєР° РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСѓСЃС‚РѕР№:");
+            puts("Строка не может быть пустой:");
     }
 }
 
 bool ReadQuestionAnswer(char* buffer, size_t bufferSize)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ReadQuestionAnswer()", LOG_DEBUG);
+    LogLine("Вызван ReadQuestionAnswer()", LOG_DEBUG);
     assert(buffer);
 
     char* res = fgets(buffer, bufferSize, stdin);
@@ -63,7 +63,7 @@ bool ReadQuestionAnswer(char* buffer, size_t bufferSize)
     {
         while (res == nullptr)
         {
-            puts("РћС‚РІРµС‚РѕРј РЅР° РІРѕРїСЂРѕСЃ РјРѕР¶РµС‚ Р±С‹С‚СЊ С‚РѕР»СЊРєРѕ: РґР°, РЅРµС‚.");
+            puts("Ответом на вопрос может быть только: да, нет.");
             res = fgets(buffer, bufferSize, stdin);
         }
 
@@ -78,9 +78,9 @@ bool ReadQuestionAnswer(char* buffer, size_t bufferSize)
                 ;
         }
 
-        if (strncmp(buffer, "РґР°", bufferSize)  == 0)
+        if (strncmp(buffer, "да", bufferSize)  == 0)
             return YES;
-        if (strncmp(buffer, "РЅРµС‚", bufferSize) == 0)
+        if (strncmp(buffer, "нет", bufferSize) == 0)
             return NO;
         res = nullptr;
     }
@@ -92,7 +92,7 @@ bool ReadQuestionAnswer(char* buffer, size_t bufferSize)
 
 char* ReadLine(char* buffer, size_t bufferSize)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ReadLine()", LOG_DEBUG);
+    LogLine("Вызван ReadLine()", LOG_DEBUG);
     assert(buffer);
 
     char* res = fgets(buffer, bufferSize, stdin);
@@ -113,7 +113,7 @@ char* ReadLine(char* buffer, size_t bufferSize)
 
 void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* child, VoiceBuffer* buffer)
 {
-    LogLine("Р’С‹Р·РІР°РЅ PrintObjectInformation()", LOG_DEBUG);
+    LogLine("Вызван PrintObjectInformation()", LOG_DEBUG);
     assert(stk);
     assert(child);
 
@@ -123,15 +123,15 @@ void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* 
 
         if (indexTo - index > 3)
         {
-            PrintNodeValue(child->nodeLeft == next? "РЅРµ " : "", &child->value, ", ", buffer, stdout);
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, ", ", buffer, stdout);
         }
         else if (indexTo - index == 3)
         {
-            PrintNodeValue(child->nodeLeft == next? "РЅРµ " : "", &child->value, " Рё ", buffer, stdout);
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, " и ", buffer, stdout);
         }
         else
         {
-            PrintNodeValue(child->nodeLeft == next? "РЅРµ " : "", &child->value, nullptr, buffer, stdout);
+            PrintNodeValue(child->nodeLeft == next? "не " : "", &child->value, nullptr, buffer, stdout);
         }
     
         child = next;
@@ -140,7 +140,7 @@ void PrintObjectInformation(size_t indexFrom, size_t indexTo, Stack* stk, Node* 
 
 void WriteTreeToFile(Akinator* akinator, FILE* file)
 {
-    LogLine("Р’С‹Р·РІР°РЅ WriteTreeToFile()", LOG_DEBUG);
+    LogLine("Вызван WriteTreeToFile()", LOG_DEBUG);
     assert(akinator);
     assert(file);
 
@@ -149,7 +149,7 @@ void WriteTreeToFile(Akinator* akinator, FILE* file)
 
 static void PrintNodeToFile(Node* node, FILE* file, size_t recursiveLength)
 {
-    LogLine("Р’С‹Р·РІР°РЅ PrintNodeToFile()", LOG_DEBUG);
+    LogLine("Вызван PrintNodeToFile()", LOG_DEBUG);
     assert(node);
     assert(file);
     
@@ -169,7 +169,7 @@ static void PrintNodeToFile(Node* node, FILE* file, size_t recursiveLength)
 
 void PrintNodeValue(const char* prefix, String* str, const char* postfix, VoiceBuffer* voiceBuffer, FILE* file)
 {
-    LogLine("Р’С‹Р·РІР°РЅ PrintNodeValue()", LOG_DEBUG);
+    LogLine("Вызван PrintNodeValue()", LOG_DEBUG);
     //assert(prefix);
     assert(str);
     //assert(voiceBuffer);
@@ -198,7 +198,7 @@ void PrintNodeValue(const char* prefix, String* str, const char* postfix, VoiceB
 
 bool ParseText(Akinator* akinator)
 {
-    LogLine("Р’С‹Р·РІР°РЅ ParseText()", LOG_DEBUG);
+    LogLine("Вызван ParseText()", LOG_DEBUG);
 
     assert(akinator);
 
@@ -217,8 +217,8 @@ bool ParseText(Akinator* akinator)
 
         if (lBracketsCount < rBracketsCount)
         {
-            puts("РћС€РёР±РѕС‡РЅР°СЏ СЃРєРѕР±РѕС‡РЅР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ.\n"
-                 "РљРѕР»РёС‡РµСЃС‚РІРѕ Р·Р°РєСЂС‹РІР°СЋС‰РёС… СЃРєРѕР±РѕРє '{' Р±РѕР»СЊС€Рµ РєРѕР»РёС‡РµСЃС‚РІР° РѕС‚РєСЂС‹РІР°СЋС‰РёС… '}'");
+            puts("Ошибочная скобочная последовательность.\n"
+                 "Количество закрывающих скобок '{' больше количества открывающих '}'");
             return false;
         }
 
@@ -272,7 +272,7 @@ bool ParseText(Akinator* akinator)
             if (!_childNode)
                 return false;
 
-            if (!_parentNode) // РљРѕСЂРµРЅСЊ РґРµСЂРµРІР°
+            if (!_parentNode) // Корень дерева
             {
                 akinator->tree.root = *_childNode;
                 break;

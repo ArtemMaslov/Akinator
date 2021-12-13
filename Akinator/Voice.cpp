@@ -21,7 +21,7 @@ static ISpVoice* pVoice = nullptr;
 
 bool VoiceConstructor()
 {
-    LogLine("Ð’Ñ‹Ð·Ð²Ð°Ð½ VoiceConstructor()", LOG_DEBUG);
+    LogLine("Âûçâàí VoiceConstructor()", LOG_DEBUG);
 
     atexit(VoiceDestructoror);
 
@@ -39,7 +39,7 @@ bool VoiceConstructor()
 
 void VoiceDestructoror()
 {
-    LogLine("Ð’Ñ‹Ð·Ð²Ð°Ð½ VoiceDestructoror()", LOG_DEBUG);
+    LogLine("Âûçâàí VoiceDestructoror()", LOG_DEBUG);
 
     pVoice->Release();
     pVoice = nullptr;
@@ -48,7 +48,7 @@ void VoiceDestructoror()
 
 bool SpeakUp(const char* ptr)
 {
-    LogLine("Ð’Ñ‹Ð·Ð²Ð°Ð½ SpeakUp()", LOG_DEBUG);
+    LogLine("Âûçâàí SpeakUp()", LOG_DEBUG);
 
     assert(ptr);
 
@@ -67,7 +67,7 @@ bool SpeakUp(const char* ptr)
 
 bool AddStringToBuffer(VoiceBuffer* buffer, const char* ptr, size_t length)
 {
-    LogLine("Ð’Ñ‹Ð·Ð²Ð°Ð½ AddStringToBuffer()", LOG_DEBUG);
+    LogLine("Âûçâàí AddStringToBuffer()", LOG_DEBUG);
 
     assert(buffer);
     assert(ptr);
@@ -85,7 +85,7 @@ bool AddStringToBuffer(VoiceBuffer* buffer, const char* ptr, size_t length)
     }
     else
     {
-        LogLine("AddStringToBuffer: voiceBuffer Ð¿ÐµÑ€ÐµÐ¿Ð¾Ð»Ð½ÐµÐ½", LOG_ERROR, true);
+        LogLine("AddStringToBuffer: voiceBuffer ïåðåïîëíåí", LOG_ERROR, true);
         return false;
     }
 }
